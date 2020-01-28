@@ -113,7 +113,7 @@
       searchAbel: Boolean, // 开启搜索
       searchKey: { // 查询请求的key
         type: String,
-        default: 'nameOrNumber'
+        default: 'codeOrName'
       },
       searchIconVisible: { // 显示搜索图标
         type: Boolean,
@@ -189,30 +189,28 @@
           return
         } else {
           initData(this.url, this.params, this.$attrs.method).then(res => {
-            if (res.status === 200) {
-              if (res.data && res.data.list && res.data.list instanceof Array) {
-                this.optionsData = res.data.list || []
-              } else if (res.data instanceof Array && res.data.length) {
-                this.optionsData = res.data || []
-              } else { // 防止查询条件更新后查不到数据的情况下 清空下拉列表
-                this.optionsData = []
-                this.labelValue = ''
-              }
-              if (this.optionsData.length && this.autoFirst) {
-                // 自动选择第一个
-                this.labelValue = this.props.value ? this.optionsData[0][this.props.value] : this.optionsData[0]
-                this.dataChange(this.labelValue)
-                this.$emit('input', this.labelValue)
-              }
-              if (this.dataField) {
-                this.optionsData = this.optionsData.map(itm => itm[this.dataField])
-              }
-              const obj = {
-                key: key,
-                options: this.optionsData
-              }
-              this.$store.dispatch('setCatch', obj)
+            if (res instanceof Array && res.length) {
+              this.optionsData = res || []
+            } else if (res.content && res.content instanceof Array) {
+              this.optionsData = res.content || []
+            } else { // 防止查询条件更新后查不到数据的情况下 清空下拉列表
+              this.optionsData = []
+              this.labelValue = ''
             }
+            if (this.optionsData.length && this.autoFirst) {
+              // 自动选择第一个
+              this.labelValue = this.props.value ? this.optionsData[0][this.props.value] : this.optionsData[0]
+              this.dataChange(this.labelValue)
+              this.$emit('input', this.labelValue)
+            }
+            if (this.dataField) {
+              this.optionsData = this.optionsData.map(itm => itm[this.dataField])
+            }
+            const obj = {
+              key: key,
+              options: this.optionsData
+            }
+            this.$store.dispatch('optionsCache/setCatch', obj)
           })
         }
       },

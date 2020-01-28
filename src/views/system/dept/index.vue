@@ -129,7 +129,7 @@
     },
     methods: {
       dataTableBeforeInit() {
-        this._url = "/sys/user";
+        this._url = "/sys/dept";
         this._method = "get";
         const params = {
           size: this.offset,

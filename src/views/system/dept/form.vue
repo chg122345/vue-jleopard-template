@@ -2,7 +2,7 @@
   <drag-dialog
     append-to-body
     :visible.sync="dialog"
-    title="用户信息"
+    title="组织信息"
     enable-drag
     width="800px">
     <dynamic-form v-bind="formOptions" :value="form" ref="pageForm" />

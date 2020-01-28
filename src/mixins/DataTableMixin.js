@@ -62,7 +62,7 @@ const DataTableMixin = {
      * @param val
      */
     dataTablePageChange(val) {
-      this.page = val
+      this.page = DEFAULT_PAGE === 0 ? val - 1 : val
       this.dataTableInit()
     },
 

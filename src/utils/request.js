@@ -22,17 +22,15 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  response => {
-    const res = response.data
-
-    if (res.code > 200) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      if (res.code === 402) {
+  response => response.data,
+  error => {
+    let message = error.message
+    if (error.response) {
+      const res = error.response.data
+      if (res.message) {
+        message = error.response.data.message
+      }
+      if (res.status === 402) {
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
           cancelButtonText: 'Cancel',
@@ -43,15 +41,6 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
-    }
-  },
-  error => {
-    let message = error.message
-    if (error.response.data && error.response.data.message) {
-      message = error.response.data.message
     }
     Message({
       showClose: true,

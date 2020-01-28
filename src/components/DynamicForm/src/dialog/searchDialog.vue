@@ -5,8 +5,8 @@
         :validate-event="false"
         placeholder="请输入关键字"
         v-model="keyword"
-        @keyup.enter.native="search">
-        <i slot="suffix" class="el-input__icon el-icon-search cursor" @click="search" />
+        @keyup.enter.native="search()">
+        <i slot="suffix" class="el-input__icon el-icon-search cursor" @click="search()" />
       </el-input>
       <div class="option-box">
         <el-scrollbar>
@@ -37,7 +37,7 @@
         <span class="page-box" v-if="total">
           <el-pagination
             :current-page.sync="currentPage"
-            :page-size="20"
+            :page-size="10"
             layout="prev, pager, next, jumper"
             :total="total" />
         </span>
@@ -75,7 +75,7 @@
       },
       searchKey: { // 查询请求的key
         type: String,
-        default: 'nameOrNumber'
+        default: 'codeOrName'
       },
       props: {
         type: Object,
@@ -94,7 +94,7 @@
         keyword: '',
         visible: false,
         dataList: this.options,
-        activeItem: {},
+        activeItem: null,
         checkedValues: [],
         currentPage: 1,
         total: 0
@@ -111,14 +111,19 @@
         if (this.visibleValue !== val) this.$emit('update:visibleValue', val)
       },
       currentPage(val) {
-        this.params.page = val
-        this.params.pageNum = val
+        this.params.page = val - 1
+        this.params.size = val
         if (this.pathPage) {
           const url = this.url.substring(0, this.url.lastIndexOf('/') + 1) + val
           this.search(url)
         } else {
           this.search()
         }
+      }
+    },
+    created() {
+      if (!this.dataList.length && this.url) {
+        this.search()
       }
     },
     methods: {
@@ -131,11 +136,11 @@
           params: param,
           data: param
         }).then(res => {
-          if (res.data && res.data.list && res.data.list instanceof Array) {
-            this.dataList = res.data.list || []
-            this.total = res.data.total || 0
-          } else if (res.data instanceof Array && res.data.length) {
-            this.dataList = res.data || []
+          if (res instanceof Array && res.length) {
+            this.dataList = res || []
+          } else if (res.content && res.content instanceof Array) {
+            this.dataList = res.content || []
+            this.total = res.totalElements || 0
           }
         })
       },
@@ -146,6 +151,10 @@
       confirm() {
         const {value} = this.props
         if (!this.multiple) {
+          if (!this.activeItem) {
+            this.visible = false
+            return
+          }
           const bindVal = value ? this.activeItem[value] : this.activeItem
           this.$emit('change', bindVal)
           this.$emit('input', bindVal)
@@ -167,7 +176,9 @@
         }
       },
       setClass(item) {
-        if (this.activeItem[this.props.value] === item[this.props.value]) {
+        if (!this.activeItem) return ''
+        const key = this.props.value || this.props.key
+        if (this.activeItem[key] === item[key]) {
           return 'active-item'
         }
         return ''

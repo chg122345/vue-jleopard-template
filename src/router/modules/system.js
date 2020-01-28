@@ -4,12 +4,21 @@ const SystemRouter = {
   path: '/system',
   component: Layout,
   redirect: '/system/user',
-  children: [{
-    path: 'user',
-    name: 'UserList',
-    component: () => import('@/views/system/user/index'),
-    meta: {title: '用户管理', icon: 'dashboard'}
-  }]
+  meta: {title: '系统管理', icon: 'dashboard'},
+  children: [
+    {
+      path: 'user',
+      name: 'UserList',
+      component: () => import('@/views/system/user/index'),
+      meta: {title: '用户管理', icon: 'dashboard'}
+    },
+    {
+      path: 'dept',
+      name: 'DeptList',
+      component: () => import('@/views/system/dept/index'),
+      meta: {title: '组织管理', icon: 'dashboard'}
+    }
+  ]
 }
 
 export default SystemRouter
