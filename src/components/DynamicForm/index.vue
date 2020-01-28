@@ -192,7 +192,7 @@
         return false;
       },
       validate(fn) {
-        this.$refs.Form.validate(fn);
+        return this.$refs.Form.validate(fn);
       },
       resetFields() {
         this.$refs.Form.resetFields();

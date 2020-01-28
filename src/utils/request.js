@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import {MessageBox, Message} from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import {getToken} from '@/utils/auth'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -11,7 +11,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     if (store.getters.token) {
-      config.headers['X-Token'] = getToken()
+      config.headers['Authorization'] = `Bearer ${getToken()}`
     }
     return config
   },
@@ -49,8 +49,13 @@ service.interceptors.response.use(
     }
   },
   error => {
+    let message = error.message
+    if (error.response.data && error.response.data.message) {
+      message = error.response.data.message
+    }
     Message({
-      message: error.message,
+      showClose: true,
+      message: message,
       type: 'error',
       duration: 5 * 1000
     })

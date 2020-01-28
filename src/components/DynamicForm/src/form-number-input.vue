@@ -3,7 +3,6 @@
     v-bind="$attrs"
     :value="numberValue"
     type="text"
-    v-on="$listeners"
     @input="limitNumber($event,$attrs.dot)"
   />
 </template>
@@ -12,7 +11,7 @@
   export default {
     name: "FormNumberInput",
     props: {
-      value: Number,
+      value: [Number, String],
       // 是否可以输入负数
       minusAble: Boolean
     },

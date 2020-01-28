@@ -52,28 +52,31 @@ export default {
       if (!col.hasOwnProperty('children') || col.children.length === 0) {
         if (col.hidden === true) return null;
         return h(_this.editable ? 'elx-editable-column' : 'elx-table-column', {
+          attrs: {
+            ...col
+          },
           props: {
-            ...col,
+            prop: col.prop || col.property,
             editRender: _this.bindEditRenderProp(col),
             width: col.width ? col.width.toString() : null,
             minWidth: col.minWidth ? col.minWidth.toString() : null,
             showOverflowTooltip: _this.$scopedSlots[col.prop] ? false : col.showOverflowTooltip !== undefined ? col.showOverflowTooltip : _this.showOverflowTooltip
           },
-          key: col.columnKey || col.prop,
+          key: col.columnKey || col.prop || col.property,
           scopedSlots: {
             edit: (props) => {
-              if (_this.$scopedSlots[col.prop + 'Edit']) {
+              if (_this.$scopedSlots[props.column.property + 'Edit']) {
                 return h('div', [
-                  _this.$scopedSlots[col.prop + 'Edit']({
+                  _this.$scopedSlots[props.column.property + 'Edit']({
                     ...props
                   })
                 ])
               }
             },
             default: (props) => {
-              if (_this.$scopedSlots[col.prop]) {
+              if (_this.$scopedSlots[props.column.property]) {
                 return h('div', [
-                  _this.$scopedSlots[col.prop]({
+                  _this.$scopedSlots[props.column.property]({
                     ...props
                   })
                 ])
@@ -257,7 +260,7 @@ export default {
       if (this.noPagination) {
         pageHeight = 0
       }
-      this.tableHeight = window.innerHeight - this.$refs.elTable.$el.getBoundingClientRect().top - pageHeight
+      this.tableHeight = window.innerHeight - this.$refs.elTable.$el.getBoundingClientRect().top - pageHeight - 16
     },
     handleSelection(data) {
       this.$emit("handleSelectionChange", data)

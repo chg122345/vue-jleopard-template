@@ -1,6 +1,6 @@
 export default {
   bind(el, binding, vnode) {
-      const enableDrag = vnode.data.attrs.enableDrag
+      const enableDrag = vnode.data.attrs['enable-drag']
       if (enableDrag) {
           const dialogHeaderEl = el.querySelector('.el-dialog__header')
           const dragDom = el.querySelector('.el-dialog')

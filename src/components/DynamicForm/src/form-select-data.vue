@@ -10,16 +10,18 @@
         :filter-method="searchAbel ? dataFilter : null"
         v-on="$listeners"
         @change="dataChange"
+        @clear="clear"
         clearable
+        :value-key="!props.value ? props.key : null"
         onmouseover="this.title = this.getElementsByClassName('el-input__inner')[0].value">
         <el-option
-          v-for="o in mapSelectOptions"
-          :key="o.value"
-          :label="o.label"
-          :value="o.value"
+          v-for="(o, index) of mapSelectOptions"
+          :key="index"
+          :label="o[props.label]"
+          :value="props.value? o[props.value] : o"
           :disabled="o.disabled">
           <template v-if="labelFields.length">
-            <span v-for="(itm, index) in labelFields" :key="index">
+            <span v-for="(itm, index2) in labelFields" :key="index2">
               {{ o[itm] }}
             </span>
           </template>
@@ -73,7 +75,7 @@
       event: 'input'
     },
     props: {
-      value: [String, Number, Array],
+      value: [String, Number, Array, Object],
       filterable: Boolean,
       url: {
         type: String,
@@ -135,21 +137,19 @@
     },
     computed: {
       mapSelectOptions() {
-        const {label, value} = this.props
-        const options = this.optionsData.map(item => {
-          item.label = item[label]
-          item.value = item[value]
-          return item
-        })
-        if (options.findIndex(i => i[this.props.value] === this.value) === -1 && this.labelText) {
-          const {label, value} = this.props
-          const obj = {
-            label: this.labelText,
-            value: this.value,
+        const {label, value, key} = this.props
+        const options = this.optionsData
+        if (this.value) {
+          if (value) {
+            if (options.findIndex(i => i[value] === this.value) === -1 && this.labelText) {
+              const obj = {}
+              this.$set(obj, label, this.labelText)
+              this.$set(obj, value, this.value)
+              options.push(obj)
+            }
+          } else if (key && typeof this.value === "object" && options.findIndex(i => i[key] === this.value[key]) === -1) {
+            options.push(this.value)
           }
-          this.$set(obj, label, this.labelText)
-          this.$set(obj, value, this.value)
-          options.push(obj)
         }
         return options
       }
@@ -163,9 +163,9 @@
       },
       url: {
         handler(val) {
-         if (val && this.subType === 'select' && !this.$attrs.cascade) {
-           this.getAsyncOptions()
-         }
+          if (val && this.subType === 'select' && !this.$attrs.cascade) {
+            this.getAsyncOptions()
+          }
         },
         immediate: true
       },
@@ -183,41 +183,37 @@
       getAsyncOptions() {
         const key = encodeURIComponent(this.url + this.params + this.$attrs.method)
         const optionsSelect = this.$store.state.optionsCache.data
-          const index = optionsSelect.findIndex(item => item.key === key)
+        const index = optionsSelect.findIndex(item => item.key === key)
         if (index !== -1) {
           this.optionsData = optionsSelect[index].options
           return
         } else {
           initData(this.url, this.params, this.$attrs.method).then(res => {
-          if (res.status === 200) {
-            if (res.data && res.data.list && res.data.list instanceof Array) {
-              this.optionsData = res.data.list || []
-              if (this.autoFirst) { // 自动选择第一个
-                this.labelValue = res.data.list[0][this.props.value]
-                this.dataChange(res.data.list[0][this.props.value])
+            if (res.status === 200) {
+              if (res.data && res.data.list && res.data.list instanceof Array) {
+                this.optionsData = res.data.list || []
+              } else if (res.data instanceof Array && res.data.length) {
+                this.optionsData = res.data || []
+              } else { // 防止查询条件更新后查不到数据的情况下 清空下拉列表
+                this.optionsData = []
+                this.labelValue = ''
+              }
+              if (this.optionsData.length && this.autoFirst) {
+                // 自动选择第一个
+                this.labelValue = this.props.value ? this.optionsData[0][this.props.value] : this.optionsData[0]
+                this.dataChange(this.labelValue)
                 this.$emit('input', this.labelValue)
               }
-            } else if (res.data instanceof Array && res.data.length) {
-              this.optionsData = res.data || []
-              if (this.autoFirst) {
-                this.labelValue = res.data[0][this.props.value]
-                this.dataChange(res.data[0][this.props.value])
-                this.$emit('input', this.labelValue)
+              if (this.dataField) {
+                this.optionsData = this.optionsData.map(itm => itm[this.dataField])
               }
-            } else { // 防止查询条件更新后查不到数据的情况下 清空下拉列表
-              this.optionsData = []
-              this.labelValue = ''
-            }
-            if (this.dataField) {
-              this.optionsData = this.optionsData.map(itm => itm[this.dataField])
-            }
-            const obj = {
-              key: key,
-              options: this.optionsData
-            }
+              const obj = {
+                key: key,
+                options: this.optionsData
+              }
               this.$store.dispatch('setCatch', obj)
-          }
-        })
+            }
+          })
         }
       },
       // 弹出选择框
@@ -230,11 +226,15 @@
       // dataChange 事件 返回选中的对象
       dataChange(val) {
         const {value} = this.props
-        this.$emit('dataChange', this.optionsData.find(i => i[value] === val))
+        if (value) {
+          this.$emit('dataChange', this.optionsData.find(i => i[value] === val))
+        } else {
+          this.$emit('dataChange', val)
+        }
       },
       // change事件
       dialogDataChange(data) {
-        const {value} = this.props
+        const value = this.props.value || this.props.key
         if (this.$attrs.multiple && data instanceof Array && data.length) {
           data.forEach(itm => {
             if (this.optionsData.findIndex(i => i[value] === itm[value]) === -1) {
@@ -251,6 +251,10 @@
       dataFilter(val) {
         this.$set(this.params, this.searchKey, val)
         this.getAsyncOptions()
+      },
+
+      clear() {
+        this.$emit('input', null)
       }
     }
   }
@@ -259,18 +263,22 @@
 <style scoped lang="scss">
   .select-data-container {
     position: relative;
+
     /deep/ .el-input {
       &:hover {
         cursor: pointer;
       }
+
       input {
         &:hover {
           cursor: pointer;
         }
       }
     }
+
     .select-box {
       position: relative;
+
       .icon {
         cursor: pointer;
         color: #C0C4CC;
@@ -280,22 +288,27 @@
         transform: translateY(-50%);
       }
     }
+
     /deep/ .el-select {
       width: 100%;
       height: 100%;
       position: relative;
+
       .el-input__suffix {
         display: none;
-        .el-icon-arrow-up{
+
+        .el-icon-arrow-up {
           display: none;
         }
       }
-      &:hover .el-input__suffix{
+
+      &:hover .el-input__suffix {
         display: inline;
         margin-right: 16px;
       }
     }
-    /deep/ .is-disabled .el-input__inner{
+
+    /deep/ .is-disabled .el-input__inner {
       color: #4D4D4D;
     }
   }

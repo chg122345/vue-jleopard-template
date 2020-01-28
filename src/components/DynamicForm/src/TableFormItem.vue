@@ -253,7 +253,7 @@
     border-top: 1px solid $border-color;
     vertical-align: top;
     overflow: hidden;
-    height: 66px;
+    height: 60px;
     color: #4D4D4D;
 
     .page-form-item-label {

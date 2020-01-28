@@ -1,5 +1,5 @@
-import {initData} from "@/api/dataTable";
-const DEFAULT_PAGE = 1
+import {initData} from "@/api/data";
+const DEFAULT_PAGE = 0
 const DataTableMixin = {
   data() {
     return {
@@ -27,11 +27,11 @@ const DataTableMixin = {
       return new Promise((resolve, reject) => {
         this.loading = true
         initData(this._url, this._params, this._method).then(res => {
-          if (res.data && res.data.rows instanceof Array) {
-            this.list = res.data.rows
-            this.total = res.data.total
-          } else if (res.data instanceof Array && res.data.length) {
-            this.list = res.data
+          if (res && res.content instanceof Array) {
+            this.list = res.content
+            this.total = res.totalElements
+          } else if (res instanceof Array && res.length) {
+            this.list = res
           } else {
             this.list = []
           }
