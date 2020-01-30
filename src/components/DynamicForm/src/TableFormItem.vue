@@ -60,6 +60,13 @@
           :value="value"
           @change="handleChange"
           :placeholder="$attrs.disabled?'':placeholder || `请选择${label}`" />
+        <form-icon-select
+          v-else-if="type === 'iconSelect'"
+          v-bind="$attrs"
+          v-on="bindListeners"
+          :value="value"
+          @change="handleChange"
+          :placeholder="$attrs.disabled?'':placeholder || `请选择${label}`" />
         <form-select-data
           v-else-if="type === 'selectData'"
           v-bind="$attrs"
@@ -103,6 +110,7 @@
       'form-radio': () => import('./form-radio'),
       'form-select': () => import('./form-select'),
       'form-tree-select': () => import('./form-tree-select'),
+      'form-icon-select': () => import('./form-icon-select'),
       'form-select-data': () => import('./form-select-data'),
       'form-upload': () => import('./form-upload'),
       'form-slider': () => import('./form-slider')
@@ -126,7 +134,7 @@
       hiddenLabel: Boolean, // 是否隐藏label
       placeholder: String,
       value: {
-        type: [Number, String, Array, Date, Object]
+        type: [Number, String, Boolean, Array, Date, Object]
       },
       cellInput: Boolean // 在表格中嵌套使用
     },

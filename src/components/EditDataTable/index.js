@@ -157,7 +157,7 @@ export default {
           },
         }) : null,
         _this.head.map(col => columnRender(col, h)),
-        !_this.toolBar.hidden ? h(_this.editable ? 'elx-editable-column' : 'elx-table-column', {
+        (_this.$scopedSlots.toolbar && !_this.toolBar.hidden) ? h(_this.editable ? 'elx-editable-column' : 'elx-table-column', {
           props: {
             ..._this.toolBar,
             width: _this.toolBar.width ? _this.toolBar.width.toString() : null,
@@ -260,7 +260,7 @@ export default {
       if (this.noPagination) {
         pageHeight = 0
       }
-      this.tableHeight = window.innerHeight - this.$refs.elTable.$el.getBoundingClientRect().top - pageHeight - 16
+      this.tableHeight = window.innerHeight - this.$refs.elTable.$el.getBoundingClientRect().top - pageHeight - 17
     },
     handleSelection(data) {
       this.$emit("handleSelectionChange", data)

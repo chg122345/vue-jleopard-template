@@ -2,30 +2,42 @@
   <drag-dialog
     append-to-body
     :visible.sync="dialog"
-    title="用户信息"
+    :title="title"
     enable-drag
-    width="800px">
+    :width="width">
     <dynamic-form v-bind="formOptions" :value="form" ref="pageForm" />
     <div class="bottom-btn-box">
-      <el-button type="primary" @click="submit">提交</el-button>
-      <el-button type="warning" @click="cancel">取消</el-button>
+      <el-button type="primary" @click="submit" :loading="loading" size="small">提交</el-button>
+      <el-button type="warning" @click="cancel" size="small">取消</el-button>
     </div>
   </drag-dialog>
 </template>
 
 <script>
-  import {add, edit} from "@/api/user";
+  import {add, edit, resetPassword} from "@/api/user";
 
   export default {
     inject: {
       parentThis: {default: {}}
     },
     data() {
+      const validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.form.password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
       return {
         loading: false,
         dialog: false,
         form: {},
-        formOptions: {
+        width: '800px',
+        title: '用户信息',
+        formOptions: {},
+        userOptions: {
           labelWidth: "80",
           rules: {
             name: [
@@ -55,7 +67,7 @@
                 label: "name",
                 key: "id"
               },
-              url: '/sys/job',
+              url: '/sys/job/select',
               params: {page: 0, size: 10}
             },
             {
@@ -113,8 +125,8 @@
               prop: "dept",
               type: "selectData",
               span: 12,
-              searchKey: 'keyWord',
-              url: '/sys/dept',
+              searchKey: 'codeOrName',
+              url: '/sys/dept/select',
               params: {page: 0, size: 10},
               searchAbel: true,
               labelFields: ['name', 'code'],
@@ -140,23 +152,64 @@
             }
           ]
         },
+        isResetPwd: false,
+        resetPwdOptions: {
+          labelWidth: "80",
+          rules: {
+            password: [
+              {required: true, message: "密码不能为空", trigger: "blur"}
+            ],
+            checkPassword: [
+              { validator: validatePass2, trigger: 'blur' }
+            ],
+          },
+          options: [
+            {
+              label: "密码",
+              prop: "password",
+              type: 'password',
+              span: 24
+            },
+            {
+              label: "确认密码",
+              prop: "checkPassword",
+              type: 'password',
+              span: 24
+            },
+          ]
+        }
       };
     },
     watch: {
       dialog(val) {
         if (val) {
+          if (this.isResetPwd) {
+            this.formOptions = this.resetPwdOptions
+            this.title = '重置密码'
+            this.width = '500px'
+          } else {
+            this.formOptions = this.userOptions
+            this.title = '用户信息'
+            this.width = '800px'
+          }
           this.$nextTick(() => {
             this.$refs.pageForm.clearValidate();
           });
+        } else {
+          this.isResetPwd = false
         }
       }
     },
     methods: {
       submit() {
         this.$refs.pageForm.validate().then(() => {
-          if (this.form.id) {
+          if (this.isResetPwd) {
+            this.resetPwd()
+          } else if (this.form.id) {
             this.doEdit()
-          } else this.doAdd()
+          } else {
+            this.doAdd()
+          }
         })
       },
       doAdd() {
@@ -192,6 +245,16 @@
             this.loading = false;
             console.log(err.response.data.message);
           });
+      },
+      resetPwd() {
+        resetPassword(this.form).then(() => {
+          this.cancel();
+          this.$notify({
+            title: "重置成功",
+            type: "success",
+            duration: 2500
+          });
+        })
       },
       cancel() {
         this.dialog = false;

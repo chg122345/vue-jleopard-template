@@ -13,6 +13,7 @@ const DataTableMixin = {
       list: [], // 数据列表
       total: 0,
       _dataField: null,
+      _transTreeOption: null // 数组转换成树配置项  {key: 'id', parentKey: 'parentId', children: 'children'}
     }
   },
   methods: {
@@ -38,10 +39,14 @@ const DataTableMixin = {
           if (this._dataField) {
             this.list = this.list.map(i => i[this._dataField])
           }
+          if (this.list.length && this._transTreeOption) {
+            const XEUtils = require("xe-utils")
+            this.list = XEUtils.toArrayTree(this.list, this._transTreeOption)
+          }
           setTimeout(() => {
             this.loading = false
           }, 170)
-          resolve(res)
+          resolve(this.list)
         }).catch(err => {
           this.loading = false
           reject(err)
@@ -112,11 +117,10 @@ const DataTableMixin = {
                       arr.push(obj)
                   } else {
                       const obj = {
-                          type: i.query.type,
+                          ...i.query,
                           label: i.label,
-                          key: i.property || i.prop,
-                          data: i.query.data,
-                          value: i.query.value
+                          prop: i.property || i.prop,
+                          options: i.query.options || i.query.data,
                       }
                       if (i.query.hidden !== undefined) {
                           Object.assign(obj, { hidden: i.query.hidden, })

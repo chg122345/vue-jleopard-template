@@ -10,13 +10,13 @@ const SystemRouter = {
       path: 'user',
       name: 'UserList',
       component: () => import('@/views/system/user/index'),
-      meta: {title: '用户管理', icon: 'dashboard'}
+      meta: {title: '用户管理', icon: 'user'}
     },
     {
       path: 'dept',
       name: 'DeptList',
       component: () => import('@/views/system/dept/index'),
-      meta: {title: '组织管理', icon: 'dashboard'}
+      meta: {title: '组织管理', icon: 'tree'}
     }
   ]
 }

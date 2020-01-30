@@ -1,11 +1,13 @@
 import DragDialog from "./DragDialog"
 import EditDataTable from "./EditDataTable"
 import DynamicForm from "./DynamicForm"
+import DynamicSearch from "./DynamicSearch"
 
 const components = [
   DragDialog,
   EditDataTable,
-  DynamicForm
+  DynamicForm,
+  DynamicSearch
 ]
 
 const install = function(Vue, opts = {}) {

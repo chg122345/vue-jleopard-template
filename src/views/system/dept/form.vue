@@ -7,14 +7,14 @@
     width="800px">
     <dynamic-form v-bind="formOptions" :value="form" ref="pageForm" />
     <div class="bottom-btn-box">
-      <el-button type="primary" @click="submit">提交</el-button>
-      <el-button type="warning" @click="cancel">取消</el-button>
+      <el-button type="primary" @click="submit" size="small">提交</el-button>
+      <el-button type="warning" @click="cancel" size="small">取消</el-button>
     </div>
   </drag-dialog>
 </template>
 
 <script>
-  import {add, edit} from "@/api/user";
+  import {add, edit} from "@/api/dept";
 
   export default {
     inject: {
@@ -34,101 +34,79 @@
           },
           options: [
             {
-              label: "姓名",
+              label: "名称",
               prop: "name",
               type: 'text',
               span: 12
             },
             {
-              label: "账号",
-              prop: "account",
+              label: "编码",
+              prop: "code",
               type: 'text',
               span: 12
             },
             {
-              label: "职位",
-              prop: "job",
-              type: "selectData",
-              span: 12,
-              showName: 'name',
-              props: {
-                label: "name",
-                key: "id"
-              },
-              url: '/sys/job',
-              params: {page: 0, size: 10}
-            },
-            {
-              label: "证件类型",
-              prop: "certificateType",
-              type: "select",
-              span: 12,
-              options: [
-                {label: '身份证', value: 0}
-              ]
-            },
-            {
-              label: "证件号",
-              prop: "certificateNumber",
-              type: "text",
+              label: "简称",
+              prop: "shortName",
+              type: 'text',
               span: 12
             },
             {
-              label: "编码",
-              prop: "code",
-              type: "text",
-              span: 12,
+              label: "全称",
+              prop: "displayName",
+              type: 'text',
+              span: 12
             },
             {
-              label: "性别",
-              prop: "sex",
+              label: "税码",
+              prop: "taxCode",
+              type: 'text',
+              span: 12
+            },
+            {
+              label: "上级部门",
+              prop: "parentId",
+              type: "treeSelect",
+              span: 12,
+              transToTree: true,
+              url: '/sys/dept/select',
+              params: {page: 0, size: 10},
+              props: {
+                label: 'name',
+                value: 'id'
+              }
+            },
+            {
+              label: "叶子节点",
+              prop: "leaf",
               type: "radio",
               span: 12,
               options: [
                 {
-                  label: '男',
-                  value: 0
+                  label: '否',
+                  value: false
                 },
                 {
-                  label: '女',
-                  value: 1
+                  label: '是',
+                  value: true
                 }
               ]
             },
             {
-              label: "邮箱",
-              prop: "email",
-              type: "text",
+              label: "是否启用",
+              prop: "enabled",
+              type: "radio",
               span: 12,
-            },
-            {
-              label: "电话",
-              prop: "phone",
-              type: "number",
-              span: 12,
-              dot: 0
-            },
-            {
-              label: "部门",
-              prop: "dept",
-              type: "selectData",
-              span: 12,
-              searchKey: 'keyWord',
-              url: '/sys/dept',
-              params: {page: 0, size: 10},
-              searchAbel: true,
-              labelFields: ['name', 'code'],
-              props: {
-                label: 'name',
-                key: 'id'
-              }
-            },
-            {
-              label: "生日",
-              prop: "birthday",
-              type: "date",
-              valueFormat: 'yyyy-MM-dd',
-              span: 12,
+              options: [
+                {
+                  label: '否',
+                  value: false
+                },
+                {
+                  label: '是',
+                  value: true
+                }
+              ]
             },
             {
               label: "备注",

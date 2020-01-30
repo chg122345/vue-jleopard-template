@@ -20,6 +20,15 @@
         numberValue: this.value
       }
     },
+    watch: {
+      value: {
+        handler(val) {
+          if (!val) {
+            this.numberValue = val
+          }
+        }
+      }
+    },
     methods: {
       limitNumber(val, num = 2) {
         if (val === undefined || val == null || val === '') {

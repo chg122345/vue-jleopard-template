@@ -22,15 +22,36 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  response => response.data,
+  response => {
+    const code = response.status
+    if (code < 200 || code > 300) {
+      Message({
+        showClose: true,
+        message: response.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject('error')
+    } else {
+      return response.data
+    }
+  },
   error => {
+    let code = 0
     let message = error.message
-    if (error.response) {
-      const res = error.response.data
-      if (res.message) {
-        message = error.response.data.message
+    try {
+      code = error.response.data.status
+      message = error.response.data.message
+    } catch (e) {
+      if (error.toString().indexOf('Error: timeout') !== -1) {
+        Notification.error({
+          title: '网络请求超时',
+          duration: 5000
+        })
+        return Promise.reject(error)
       }
-      if (res.status === 402) {
+    }
+    if (code === 402) {
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
           cancelButtonText: 'Cancel',
@@ -40,14 +61,14 @@ service.interceptors.response.use(
             location.reload()
           })
         })
-      }
+      } else {
+      Message({
+        showClose: true,
+        message: message,
+        type: 'error',
+        duration: 5 * 1000
+      })
     }
-    Message({
-      showClose: true,
-      message: message,
-      type: 'error',
-      duration: 5 * 1000
-    })
     return Promise.reject(error)
   }
 )

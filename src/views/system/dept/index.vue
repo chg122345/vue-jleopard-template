@@ -1,24 +1,26 @@
 <template>
   <div class="content-warp">
     <el-card class="box-card" shadow="never">
+      <div class="table-top-tool">
+        <dynamic-search :data="tableFilterList(tableHead)" @search="dataTableSearch">
+          <el-button type="success" size="small" icon="el-icon-plus" @click="subAdd">新增</el-button>
+        </dynamic-search>
+      </div>
       <edit-data-table
         ref="editTable"
+        show-number
         :head="tableHead"
         :loading="loading"
         :data.sync="list"
         :config="{render: 'scroll', renderSize: 100}"
         :editable="false"
-        :tool-bar="{label:'操作', align: 'center', width: 200, fixed: 'right'}"
+        :tool-bar="{label:'操作', align: 'center', width: 150, fixed: 'right'}"
         :total="total"
         :offset="offset"
         :page="page"
         @handlePageChange="dataTablePageChange"
         @handleSizeChange="dataTableSizeChange">
         <template #toolbar="{row}">
-          <el-button
-            size="mini"
-            type="success"
-            icon="el-icon-key" />
           <el-button
             size="mini"
             type="primary"
@@ -46,89 +48,88 @@
         </template>
       </edit-data-table>
     </el-card>
-    <j-form ref="form" />
+    <j-form ref="subThis" />
   </div>
 </template>
 
 <script>
   import DataTableMixin from "@/mixins/DataTableMixin"
   import JForm from './form'
-  import {deepClone} from "@/utils";
-  import {del} from "@/api/user";
+  import {del} from "@/api/dept";
+  import ToolBarMixin from "../mixins/ToolBarMixin";
 
   export default {
     name: "Index",
     components: {JForm},
     directives: {},
     filters: {},
-    mixins: [DataTableMixin],
+    mixins: [DataTableMixin, ToolBarMixin],
     props: {},
     data() {
       return {
         tableHead: [
           {
-            label: "姓名",
+            label: "名称",
             prop: "name",
-            sortable: true
-          },
-          {
-            label: "编号",
-            prop: "code"
-          },
-          {
-            label: "电话",
-            prop: "phone",
-            width: 120
-          },
-          {
-            label: "邮箱",
-            prop: "email"
-          },
-          {
-            label: "性别",
-            prop: "sex",
-            formatter: (val) => {
-              if (val !== undefined) return val === 0 ? "男" : '女'
+            sortable: true,
+            minWidth: 120,
+            query: {
+              type: 'input'
             }
           },
           {
-            label: "组织名称",
-            prop: "dept.name"
+            label: "编码",
+            prop: "code"
           },
           {
-            label: "职位名称",
-            prop: "job.name",
+            label: "简称",
+            prop: "shortName",
+          },
+          {
+            label: "全称",
+            prop: "displayName",
+          },
+          {
+            label: "税码",
+            prop: "taxCode",
+          },
+          {
+            label: "叶子节点",
+            prop: "leaf",
+            formatter: (val) => {
+              if (val !== undefined) return val === 0 ? "否" : '是'
+            }
           },
           {
             label: "是否启用",
             prop: "enabled",
-            width: 100
+            formatter: (val) => {
+              if (val !== undefined) return val === 0 ? "禁用" : '启用'
+            }
           },
           {
-            label: "注册时间",
+            label: "备注",
+            prop: "remark",
+          },
+          {
+            label: "创建时间",
             property: "created",
+            align: 'center',
+            width: 160,
             sortable: true
           },
         ],
         delLoading: false
       }
     },
-    provide() {
-      return {
-        parentThis: this,
-        subThis: null
-      };
-    },
     created() {
       this.$nextTick(() => {
-        this.dataTableInit();
+        this.dataTableInit()
       });
-    },
-    updated() {
-      this.subThis = this.$refs.form
     },
     methods: {
       dataTableBeforeInit() {
+        this._transTreeOption = {key: 'id', parentKey: 'parentId', children: 'children'}
         this._url = "/sys/dept";
         this._method = "get";
         const params = {
@@ -137,14 +138,6 @@
         };
         this._params = Object.assign(params, this._query);
         return true;
-      },
-      subAdd() {
-        this.subThis.form = {}
-        this.subThis.dialog = true
-      },
-      subEdit(data) {
-        this.subThis.form = deepClone(data)
-        this.subThis.dialog = true
       },
       subDelete(id) {
         this.delLoading = true;
@@ -166,7 +159,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>

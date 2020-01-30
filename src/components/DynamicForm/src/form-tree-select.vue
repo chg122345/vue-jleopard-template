@@ -22,7 +22,7 @@
         :expand-on-click-node="false"
         :show-checkbox="multiple"
         :accordion="accordion"
-        :data="optionsData"
+        :data="mapOptionsData"
         :props="props"
         :node-key="props.value"
         :check-strictly="true"
@@ -90,6 +90,17 @@
           sort: 'orderNum-',
         }),
       },
+      // 禁止选的值
+      disabledValue: {
+        type: Array,
+        default: () => []
+      },
+      // 数组转换成树
+      transToTree: Boolean,
+      transToTreeOption: {
+        type: Object,
+        default: () => ({key: "value", parentKey: 'parentId', children: 'children'})
+      }
     },
     data() {
       return {
@@ -104,6 +115,29 @@
         if (this.disabled) return true;
         return this.$parent.form ? this.$parent.form.disabled : false;
       },
+      mapOptionsData() {
+        // 异步数据刷新label
+        if (this.value && !this.labelModel) {
+          this.initHandler()
+        }
+        if (this.transToTree) {
+          const XEUtils = require("xe-utils")
+          const {value, children} = this.props
+          this.$set(this.transToTreeOption, 'key', value)
+          if (children) {
+            this.$set(this.transToTreeOption, 'children', children)
+          }
+          if (this.disabledValue.length) {
+            this.optionsData.forEach(i => {
+              if (this.disabledValue.includes(i[this.props.value])) {
+                i.disabled = true
+              }
+            })
+          }
+          return XEUtils.toArrayTree(this.optionsData, this.transToTreeOption)
+        }
+        return this.optionsData
+      }
     },
     watch: {
       valueModel: {
@@ -155,7 +189,7 @@
     methods: {
       // 初始化值
       initHandler() {
-        if (!this.value) return
+        if (!this.value || !this.optionsData.length) return
         const val = this.value
         let valueModel = null
         this.$nextTick(() => {
@@ -213,7 +247,6 @@
             this.$refs.select.blur(); // 收起下拉框
             // this.$refs.select.focus();  // 获取焦点
           }
-          this.emitChange()
         }
       },
       // 选择框勾选
@@ -223,7 +256,6 @@
           this.labelModel = checked.checkedNodes.map(i => i.label)
           this.labelModel2 = this.labelModel
         }
-        this.emitChange()
       },
       // 下拉菜单显示回调
       async visibleChange(show) {
@@ -269,11 +301,8 @@
       // 节点渲染函数
       renderContent(h, {node, data}) {
         return (<span
-      class={`${!this.multiple ? 'el-tree-node__label' : ''} ${data.disabled ? 'is-disabled' : ''}`}>{node.label}
+      class={`${!this.multiple ? 'el-tree-node__label' : ''} ${data.disabled ? 'is-node-disabled' : ''}`}>{node.label}
       </span>);
-      },
-      emitChange() {
-        // this.$emit('change',this.valueModel)
       },
       loadNode(node, resolve) {
         this.$emit('loadNode', {node, resolve}) //
@@ -287,17 +316,15 @@
           return
         } else {
           initData(this.url, params, this.$attrs.method).then(res => {
-            if (res.status === 200) {
-              this.optionsData = res.data.list || res.data || []
-              if (this.dataField) {
-                this.optionsData = this.optionsData[this.dataField]
-              }
-              const obj = {
-                key: key,
-                options: this.optionsData
-              }
-              this.$store.dispatch('setCatch', obj)
+            this.optionsData = res.content || res || []
+            if (this.dataField) {
+              this.optionsData = this.optionsData[this.dataField]
             }
+            const obj = {
+              key: key,
+              options: this.optionsData
+            }
+            this.$store.dispatch('optionsCache/setCatch', obj)
           })
         }
       },
@@ -305,7 +332,9 @@
   };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @import "~@/styles/element-variables.scss";
+
   .el-select-dropdown {
     max-height: 274px;
   }
@@ -329,7 +358,7 @@
   }
 
   .el-tree >>> .is-current .el-tree-node__label {
-    color: #66c5c7;
+    color: $--color-primary;
     font-weight: 700;
   }
 
@@ -337,8 +366,9 @@
     color: #606266;
     font-weight: normal;
   }
-
-  .el-tree >>> .el-tree-node__children .el-tree-node__content .is-disabled {
+  .el-tree >>> .el-tree-node__children .el-tree-node__content .is-node-disabled {
     cursor: not-allowed;
+    color: #C0C4CC;
+    width: 100%;
   }
 </style>

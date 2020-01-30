@@ -1,8 +1,14 @@
 <template>
   <div class="content-warp">
     <el-card class="box-card" shadow="never">
+      <div class="table-top-tool">
+        <dynamic-search :data="tableFilterList(tableHead)" @search="dataTableSearch">
+          <el-button type="success" size="small" icon="el-icon-plus" @click="subAdd">新增</el-button>
+        </dynamic-search>
+      </div>
       <edit-data-table
         ref="editTable"
+        show-number
         :head="tableHead"
         :loading="loading"
         :data.sync="list"
@@ -18,7 +24,8 @@
           <el-button
             size="mini"
             type="success"
-            icon="el-icon-key" />
+            icon="el-icon-key"
+            @click="resetPwd(row.id)" />
           <el-button
             size="mini"
             type="primary"
@@ -46,22 +53,22 @@
         </template>
       </edit-data-table>
     </el-card>
-    <j-form ref="form" />
+    <j-form ref="subThis" />
   </div>
 </template>
 
 <script>
   import DataTableMixin from "@/mixins/DataTableMixin"
   import JForm from './form'
-  import {deepClone} from "@/utils";
   import {del} from "@/api/user";
+  import ToolBarMixin from "../mixins/ToolBarMixin";
 
   export default {
     name: "Index",
     components: {JForm},
     directives: {},
     filters: {},
-    mixins: [DataTableMixin],
+    mixins: [DataTableMixin, ToolBarMixin],
     props: {},
     data() {
       return {
@@ -69,7 +76,10 @@
           {
             label: "姓名",
             prop: "name",
-            sortable: true
+            sortable: true,
+            query: {
+              type: 'input'
+            }
           },
           {
             label: "编号",
@@ -107,25 +117,18 @@
           {
             label: "注册时间",
             property: "created",
+            align: 'center',
+            width: 160,
             sortable: true
           },
         ],
         delLoading: false
       }
     },
-    provide() {
-      return {
-        parentThis: this,
-        subThis: null
-      };
-    },
     created() {
       this.$nextTick(() => {
         this.dataTableInit();
       });
-    },
-    updated() {
-      this.subThis = this.$refs.form
     },
     methods: {
       dataTableBeforeInit() {
@@ -137,14 +140,6 @@
         };
         this._params = Object.assign(params, this._query);
         return true;
-      },
-      subAdd() {
-        this.subThis.form = {}
-        this.subThis.dialog = true
-      },
-      subEdit(data) {
-        this.subThis.form = deepClone(data)
-        this.subThis.dialog = true
       },
       subDelete(id) {
         this.delLoading = true;
@@ -162,11 +157,12 @@
           this.delLoading = false;
           this.$refs[id].doClose();
         });
+      },
+      resetPwd(id) {
+        this._subThis.isResetPwd = true
+        this._subThis.form = {id}
+        this._subThis.dialog = true
       }
     }
   }
 </script>
-
-<style scoped>
-
-</style>
