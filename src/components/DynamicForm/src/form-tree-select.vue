@@ -250,6 +250,8 @@
             this.$refs.select.blur(); // 收起下拉框
             // this.$refs.select.focus();  // 获取焦点
           }
+          this.$emit('change', this.valueModel);
+          this.$emit('input', this.valueModel);
         }
       },
       // 选择框勾选

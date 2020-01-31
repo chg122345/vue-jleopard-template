@@ -5,7 +5,7 @@
     title="组织信息"
     enable-drag
     width="800px">
-    <dynamic-form v-bind="formOptions" :value="form" ref="pageForm" />
+    <dynamic-form v-bind="formOptions" :value="form" :editable="editable" ref="pageForm" />
     <div class="bottom-btn-box">
       <el-button type="primary" @click="submit" size="small">提交</el-button>
       <el-button type="warning" @click="cancel" size="small">取消</el-button>
@@ -25,6 +25,7 @@
         loading: false,
         dialog: false,
         form: {},
+        editable: true,
         formOptions: {
           labelWidth: "80",
           rules: {
@@ -130,6 +131,8 @@
               this.$set(this.formOptions.options[index], 'disabledValue', [this.form.id])
             }
           });
+        } else {
+          this.editable = true
         }
       }
     },

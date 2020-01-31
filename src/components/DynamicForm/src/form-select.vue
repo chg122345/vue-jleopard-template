@@ -46,7 +46,7 @@
       event: 'input'
     },
     props: {
-      value: [String, Number, Array],
+      value: [String, Number, Boolean, Array],
       url: String,
       params: Object,
       options: {

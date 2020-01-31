@@ -23,7 +23,8 @@
     watch: {
       value: {
         handler(val) {
-          if (!val) {
+          // val === undefined && this.numberValue !== '-'
+          if (val+'.' !== this.numberValue) {
             this.numberValue = val
           }
         }
@@ -33,14 +34,18 @@
       limitNumber(val, num = 2) {
         if (val === undefined || val == null || val === '') {
           this.numberValue = null
-          this.$emit('input', this.numberValue)
+          if (this.value) {
+            this.$emit('input', null)
+          }
           return
         }
         let value = val.toString()
         if (this.minusAble) {
           if (value && value.length === 1 && ['-', '+'].includes(value)) {
             this.numberValue = value
-            this.$emit('input', null)
+            if (this.value) {
+              this.$emit('input', null)
+            }
             return
           }
         }

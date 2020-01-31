@@ -20,13 +20,16 @@
         :page="page"
         @handlePageChange="dataTablePageChange"
         @handleSizeChange="dataTableSizeChange">
+        <template #icon="{row}">
+          <svg-icon :icon-class="row.icon" />
+        </template>
         <template #toolbar="{row}">
           <el-button
             size="mini"
             type="primary"
             icon="el-icon-edit"
             @click="subEdit(row)" />
-          <el-popover :ref="row.id" placement="top" width="180">
+          <el-popover :ref="row.id" placement="top" width="180" v-if="!row.enabled">
             <p>确定删除本条数据吗?</p>
             <div style="text-align: right; margin: 0">
               <el-button
@@ -45,6 +48,11 @@
             </div>
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" />
           </el-popover>
+          <el-button
+            size="mini"
+            type="info"
+            icon="el-icon-view"
+            @click="subLook(row)" />
         </template>
       </edit-data-table>
     </el-card>
@@ -55,7 +63,7 @@
 <script>
   import DataTableMixin from "@/mixins/DataTableMixin"
   import JForm from './form'
-  import {del} from "@/api/dept";
+  import {del} from "@/api/menu";
   import ToolBarMixin from "../mixins/ToolBarMixin";
 
   export default {
@@ -72,44 +80,57 @@
             label: "名称",
             prop: "name",
             sortable: true,
-            minWidth: 120,
+            minWidth: 100,
             query: {
               type: 'input'
             }
           },
           {
-            label: "编码",
-            prop: "code"
+            label: "权限编码",
+            prop: "perms"
           },
           {
-            label: "简称",
-            prop: "shortName",
+            label: "图标",
+            prop: "icon",
+            type: 'slot'
           },
           {
-            label: "全称",
-            prop: "displayName",
+            label: "菜单路径",
+            prop: "path",
           },
           {
-            label: "税码",
-            prop: "taxCode",
-          },
-          {
-            label: "叶子节点",
-            prop: "leaf",
+            label: "类型",
+            prop: "type",
             formatter: (val) => {
-              if (val !== undefined) return val === 0 ? "否" : '是'
+              if (val !== undefined) {
+                if (val === 0) {
+                  return "目录"
+                } else if (val === 1) {
+                  return "菜单"
+                } else if (val === 2) {
+                  return "权限"
+                }
+              }
+            }
+          },
+          {
+            label: "排序号",
+            prop: "sortNumber",
+            sortable: true
+          },
+          {
+            label: "是否隐藏",
+            prop: "isHidden",
+            formatter: (val) => {
+              if (val !== undefined) return val? "隐藏" : '显示'
             }
           },
           {
             label: "是否启用",
             prop: "enabled",
             formatter: (val) => {
-              if (val !== undefined) return val === 0 ? "禁用" : '启用'
+              if (val !== undefined) return val ? '启用' : "禁用"
             }
-          },
-          {
-            label: "备注",
-            prop: "remark",
           },
           {
             label: "创建时间",

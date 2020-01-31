@@ -23,6 +23,11 @@ const ToolBarMixin = {
       this._subThis.form = deepClone(data)
       this._subThis.dialog = true
     },
+    subLook(data) {
+      this._subThis.form = deepClone(data)
+      this._subThis.editable = false
+      this._subThis.dialog = true
+    }
   }
 }
 

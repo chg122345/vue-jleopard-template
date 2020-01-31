@@ -19,6 +19,7 @@
       :rules="item.rules || rules[item.prop]"
       :clearable="true"
       :cell-input="cellInput"
+      :editable="editable"
       :disabled="item.disabled || !editable"
       :label-text="item.labelText || value[item.labelTextField]"
       @input="handleInput($event, item)"
@@ -65,8 +66,7 @@
       return {
         labelWidth: this.labelWidth,
         rules: this.rules,
-        formSubject: this.formSubject,
-        editable: this.editable
+        formSubject: this.formSubject
       };
     },
     data() {

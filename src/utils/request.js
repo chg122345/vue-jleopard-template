@@ -41,7 +41,7 @@ service.interceptors.response.use(
     let message = error.message
     try {
       code = error.response.data.status
-      message = error.response.data.message
+      message = error.response.data.message || error.response.data.error_description
     } catch (e) {
       if (error.toString().indexOf('Error: timeout') !== -1) {
         Notification.error({

@@ -116,6 +116,7 @@
       'form-slider': () => import('./form-slider')
     },
     props: {
+      editable:  Boolean,
       type: String, // 表单项类型
       autoSize: [Object, Boolean],
       label: String, // label文本
@@ -139,7 +140,6 @@
       cellInput: Boolean // 在表格中嵌套使用
     },
     inject: {
-      editable: {default: true},
       labelWidth: {default: 160},
       rules: {default: {}},
       formSubject: {default: {}}

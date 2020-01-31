@@ -5,7 +5,7 @@
     :title="title"
     enable-drag
     :width="width">
-    <dynamic-form v-bind="formOptions" :value="form" ref="pageForm" />
+    <dynamic-form v-bind="formOptions" :value="form" :editable="editable" ref="pageForm" />
     <div class="bottom-btn-box">
       <el-button type="primary" @click="submit" :loading="loading" size="small">提交</el-button>
       <el-button type="warning" @click="cancel" size="small">取消</el-button>
@@ -37,6 +37,7 @@
         width: '800px',
         title: '用户信息',
         formOptions: {},
+        editable: true,
         userOptions: {
           labelWidth: "80",
           rules: {
@@ -214,6 +215,7 @@
           });
         } else {
           this.isResetPwd = false
+          this.editable = true
         }
       }
     },

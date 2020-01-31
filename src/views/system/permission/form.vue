@@ -2,10 +2,10 @@
   <drag-dialog
     append-to-body
     :visible.sync="dialog"
-    title="组织信息"
+    title="菜单权限信息"
     enable-drag
     width="800px">
-    <dynamic-form v-bind="formOptions" :value="form" ref="pageForm" />
+    <dynamic-form v-bind="formOptions" :value="form" :editable="editable" ref="pageForm" />
     <div class="bottom-btn-box">
       <el-button type="primary" @click="submit" size="small">提交</el-button>
       <el-button type="warning" @click="cancel" size="small">取消</el-button>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import {add, edit} from "@/api/dept";
+  import {add, edit} from "@/api/menu";
 
   export default {
     inject: {
@@ -25,11 +25,12 @@
         loading: false,
         dialog: false,
         form: {},
+        editable : true,
         formOptions: {
           labelWidth: "80",
           rules: {
             name: [
-              {required: true, message: "姓名不能为空", trigger: "blur"}
+              {required: true, message: "名称不能为空", trigger: "blur"}
             ],
           },
           options: [
@@ -40,57 +41,100 @@
               span: 12
             },
             {
-              label: "编码",
-              prop: "code",
+              label: "权限编码",
+              prop: "perms",
               type: 'text',
               span: 12
             },
             {
-              label: "简称",
-              prop: "shortName",
+              label: "类型",
+              prop: "type",
+              type: 'select',
+              options: [
+                {
+                  label: '目录',
+                  value: 0,
+                },
+                {
+                  label: '菜单',
+                  value: 1,
+                },
+                {
+                  label: '权限',
+                  value: 2,
+                }
+              ],
+              span: 12
+            },
+            {
+              label: "是否隐藏",
+              prop: "isHidden",
+              type: "radio",
+              span: 12,
+              options: [
+                {
+                  label: '是',
+                  value: true
+                },
+                {
+                  label: '否',
+                  value: false
+                }
+              ]
+            },
+            {
+              label: "外链菜单",
+              prop: "iframe",
+              type: "radio",
+              span: 12,
+              options: [
+                {
+                  label: '是',
+                  value: true
+                },
+                {
+                  label: '否',
+                  value: false
+                }
+              ]
+            },
+            {
+              label: "路径",
+              prop: "path",
               type: 'text',
               span: 12
             },
             {
-              label: "全称",
-              prop: "displayName",
+              label: "组件",
+              prop: "component",
               type: 'text',
               span: 12
             },
             {
-              label: "税码",
-              prop: "taxCode",
-              type: 'text',
+              label: "图标",
+              prop: "icon",
+              type: 'iconSelect',
               span: 12
             },
             {
-              label: "上级部门",
+              label: "上级菜单",
               prop: "parentId",
               type: "treeSelect",
-              span: 12,
+              span: 24,
               transToTree: true,
-              url: '/sys/dept/select',
-              params: {page: 0, size: 10},
+              url: '/sys/menu/select',
+              params: {type: '0,1'},
               props: {
                 label: 'name',
                 value: 'id'
               }
             },
             {
-              label: "叶子节点",
-              prop: "leaf",
-              type: "radio",
-              span: 12,
-              options: [
-                {
-                  label: '否',
-                  value: false
-                },
-                {
-                  label: '是',
-                  value: true
-                }
-              ]
+              label: "排序号",
+              prop: "sortNumber",
+              type: 'number',
+              minusAble: true,
+              span: 12
             },
             {
               label: "是否启用",
@@ -99,22 +143,14 @@
               span: 12,
               options: [
                 {
-                  label: '否',
-                  value: false
-                },
-                {
                   label: '是',
                   value: true
+                },
+                {
+                  label: '否',
+                  value: false
                 }
               ]
-            },
-            {
-              label: "备注",
-              prop: "remark",
-              type: "textarea",
-              span: 24,
-              autoSize: {minRows: 3, maxRows: 3},
-              height: 90
             }
           ]
         },
@@ -130,6 +166,8 @@
               this.$set(this.formOptions.options[index], 'disabledValue', [this.form.id])
             }
           });
+        } else {
+          this.editable = true
         }
       }
     },

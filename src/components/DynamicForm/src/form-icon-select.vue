@@ -46,5 +46,8 @@
     /deep/ .el-input__inner {
       padding-left: 40px!important;
     }
+    /deep/ .el-input__prefix {
+      display: block;
+    }
   }
 </style>
