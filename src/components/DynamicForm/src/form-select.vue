@@ -33,6 +33,7 @@
 
 <script>
   import {initData} from "@/api/data";
+  import {objectEqual} from "@/utils"
 
   export default {
     name: "FromSelect",
@@ -110,7 +111,7 @@
       },
       params: {
         handler(val, oldVal) {
-          if (val !== oldVal) {
+          if (!objectEqual(val, oldVal)) {
             this.getAsyncOptions(val)
           }
         },
@@ -128,7 +129,7 @@
     },
     methods: {
       getAsyncOptions(params = this.params) {
-          const key = encodeURIComponent(this.url + params + this.$attrs.method)
+          const key = encodeURIComponent(this.url + JSON.stringify(params) + this.$attrs.method)
           const optionsSelect = this.$store.state.optionsCache.data
           const index = optionsSelect.findIndex(item => item.key === key)
           if (index !== -1) {

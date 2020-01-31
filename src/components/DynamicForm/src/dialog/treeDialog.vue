@@ -18,6 +18,7 @@
             :node-key="props.value || props.key"
             show-checkbox
             highlight-current
+            :default-checked-keys="checkedKeys"
             :filter-node-method="filterNodeMethod || filterNode"
             @check="dataCheck"
             v-bind="$attrs"
@@ -101,6 +102,7 @@ export default {
       keyword: '',
       visible: true,
       checkedNodes: [],
+      checkedKeys: [],
       optionsData: this.options || []
     }
   },
@@ -131,7 +133,13 @@ export default {
             this.checkedNodes = [val]
           }
           if (this.checkedNodes.length) {
-            this.$refs.elTree.setCheckedKeys(this.checkedNodes.map(i => i[this.props.value || this.props.key]))
+            const key = this.props.value || this.props.key
+            if (this.$refs.elTree) {
+              this.checkedKeys = []
+              this.$refs.elTree.setCheckedKeys(this.checkedNodes.map(i => i[key]))
+            } else {
+              this.checkedKeys = this.checkedNodes.map(i => i[key])
+            }
           }
         }
       },

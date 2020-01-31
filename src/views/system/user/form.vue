@@ -58,19 +58,6 @@
               span: 12
             },
             {
-              label: "职位",
-              prop: "job",
-              type: "selectData",
-              span: 12,
-              showName: 'name',
-              props: {
-                label: "name",
-                key: "id"
-              },
-              url: '/sys/job/select',
-              params: {page: 0, size: 10}
-            },
-            {
               label: "证件类型",
               prop: "certificateType",
               type: "select",
@@ -121,12 +108,21 @@
               dot: 0
             },
             {
+              label: "生日",
+              prop: "birthday",
+              type: "date",
+              valueFormat: 'yyyy-MM-dd',
+              span: 12,
+            },
+            {
               label: "部门",
               prop: "dept",
               type: "selectData",
               span: 12,
               searchKey: 'codeOrName',
               url: '/sys/dept/select',
+              subType: 'treeSelect',
+              transToTree: true,
               params: {page: 0, size: 10},
               searchAbel: true,
               labelFields: ['name', 'code'],
@@ -136,11 +132,32 @@
               }
             },
             {
-              label: "生日",
-              prop: "birthday",
-              type: "date",
-              valueFormat: 'yyyy-MM-dd',
+              label: "职位",
+              prop: "job",
+              type: "selectData",
               span: 12,
+              showName: 'name',
+              cascade: 'dept',
+              props: {
+                label: "name",
+                key: "id"
+              },
+              url: '/sys/job/select',
+              params: {page: 0, size: 10, deptId: null}
+            },
+            {
+              label: "角色",
+              prop: "roles",
+              type: "selectData",
+              span: 12,
+              showName: 'name',
+              multiple: true,
+              props: {
+                label: "name",
+                key: "id"
+              },
+              url: '/sys/role',
+              params: {page: 0, size: 10}
             },
             {
               label: "备注",

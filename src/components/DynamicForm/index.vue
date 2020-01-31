@@ -211,12 +211,12 @@
         }
       },
       handleInput(val, item) {
-        const {prop} = item
+        const {prop, props} = item
         this.$emit('input', val);
-        this.handlerCascade(val, prop)
+        this.handlerCascade(val, prop, props)
       },
       // 选项级联处理
-      handlerCascade(val, key) {
+      handlerCascade(val, key, props = {}) {
         if (this.cascadeMap.has(key)) {
           const arr = this.cascadeMap.get(key)
           arr.forEach(obj => {
@@ -228,7 +228,12 @@
                   object.params[key] = val
                 }
               })*/
-              object.params[obj.parentField] = val
+              if (typeof val === "object") {
+                const rField = props.key || props.value || 'value'
+                object.params[obj.parentField] = val[rField]
+              } else {
+                object.params[obj.parentField] = val
+              }
               this.$set(this.options, obj.index, object)
             }
             this.handlerCascade('', obj.prop)
@@ -241,9 +246,15 @@
           const arr = this.cascadeMap.get(key)
           arr.forEach(obj => {
             if (this.hasInitOptionsProps.includes(obj.prop)) return
-            if (val) {
+            if (val && this.value[obj.prop]) {
               const object = deepClone(this.options[obj.index])
-              object.params[obj.parentField] = val
+              if (typeof val === "object") {
+                const props = this.options.find(op => op.prop === 'key').props
+                const rField = props.key || props.value || 'value'
+                object.params[obj.parentField] = val[rField]
+              } else {
+                object.params[obj.parentField] = val
+              }
               this.$set(this.options, obj.index, object)
               this.hasInitOptionsProps.push(obj.prop)
             }

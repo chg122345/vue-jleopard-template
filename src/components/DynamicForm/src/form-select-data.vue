@@ -62,6 +62,7 @@
 
 <script>
   import {initData} from "@/api/data";
+  import {objectEqual} from "@/utils"
 
   export default {
     name: "FromSelectData",
@@ -78,7 +79,6 @@
     },
     props: {
       value: [String, Number, Array, Object],
-      filterable: Boolean,
       url: {
         type: String,
         default: ''
@@ -142,15 +142,34 @@
         const {label, value, key} = this.props
         const options = this.optionsData
         if (this.value) {
-          if (value) {
-            if (options.findIndex(i => i[value] === this.value) === -1 && this.labelText) {
-              const obj = {}
-              this.$set(obj, label, this.labelText)
-              this.$set(obj, value, this.value)
-              options.push(obj)
+          if (this.$attrs.multiple && this.value instanceof Array && this.value.length) {
+            if (value && this.labelText && this.labelText.length === this.value.length) {
+              this.value.forEach((va, index) => {
+                if (options.findIndex(i => i[value] === va) === -1) {
+                  const obj = {}
+                  this.$set(obj, label, this.labelText[index])
+                  this.$set(obj, value, va)
+                  options.push(obj)
+                }
+              })
+            } else if (key) {
+              this.value.forEach(va => {
+                if (options.findIndex(i => i[key] === va[key]) === -1) {
+                  options.push(va)
+                }
+              })
             }
-          } else if (key && typeof this.value === "object" && options.findIndex(i => i[key] === this.value[key]) === -1) {
-            options.push(this.value)
+          } else if (!this.$attrs.multiple) {
+            if (value) {
+              if (options.findIndex(i => i[value] === this.value) === -1 && this.labelText) {
+                const obj = {}
+                this.$set(obj, label, this.labelText)
+                this.$set(obj, value, this.value)
+                options.push(obj)
+              }
+            } else if (key && typeof this.value === "object" && options.findIndex(i => i[key] === this.value[key]) === -1) {
+              options.push(this.value)
+            }
           }
         }
         return options
@@ -173,8 +192,8 @@
       },
       params: {
         handler(val, oldVal) {
-          if (val !== oldVal && this.subType === 'select') {
-            this.getAsyncOptions()
+          if (!objectEqual(val, oldVal) && this.subType === 'select') {
+            this.getAsyncOptions(val)
           }
         },
         deep: true
@@ -182,15 +201,15 @@
     },
     methods: {
       // 获取选项数据
-      getAsyncOptions() {
-        const key = encodeURIComponent(this.url + this.params + this.$attrs.method)
+      getAsyncOptions(params = this.params) {
+        const key = encodeURIComponent(this.url + JSON.stringify(params) + this.$attrs.method)
         const optionsSelect = this.$store.state.optionsCache.data
         const index = optionsSelect.findIndex(item => item.key === key)
         if (index !== -1) {
           this.optionsData = optionsSelect[index].options
           return
         } else {
-          initData(this.url, this.params, this.$attrs.method).then(res => {
+          initData(this.url, params, this.$attrs.method).then(res => {
             if (res instanceof Array && res.length) {
               this.optionsData = res || []
             } else if (res.content && res.content instanceof Array) {

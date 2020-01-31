@@ -119,6 +119,12 @@
         } else {
           this.search()
         }
+      },
+      options: {
+        handler(val) {
+          this.dataList = val
+        },
+        deep: true
       }
     },
     created() {
