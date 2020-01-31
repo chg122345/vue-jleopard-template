@@ -13,6 +13,7 @@
         @clear="clear"
         clearable
         :value-key="!props.value ? props.key : null"
+        @visible-change="visibleChange"
         onmouseover="this.title = this.getElementsByClassName('el-input__inner')[0].value">
         <el-option
           v-for="(o, index) of mapSelectOptions"
@@ -42,9 +43,10 @@
       v-bind="$attrs"
       v-on="$listeners"
       @dataChange="dialogDataChange" />
-    <person-dialog
+    <tree-dialog
       v-else
       :visible-value.sync="dialogShow"
+      :value="value"
       :props="props"
       :url="url"
       :title="title"
@@ -65,7 +67,7 @@
     name: "FromSelectData",
     components: {
       'search-dialog': () => import('./dialog/searchDialog'),
-      'person-dialog': () => import('./dialog/personDialog')
+      'tree-dialog': () => import('./dialog/treeDialog')
     },
     directives: {},
     filters: {},
@@ -213,6 +215,10 @@
             this.$store.dispatch('optionsCache/setCatch', obj)
           })
         }
+      },
+      visibleChange() {
+        if (this.subType === 'select') return
+        this.alertDialog()
       },
       // 弹出选择框
       alertDialog() {

@@ -17,6 +17,18 @@ const SystemRouter = {
       name: 'DeptList',
       component: () => import('@/views/system/dept/index'),
       meta: {title: '组织管理', icon: 'tree'}
+    },
+    {
+      path: 'job',
+      name: 'JobList',
+      component: () => import('@/views/system/job/index'),
+      meta: {title: '职位管理', icon: 'tree'}
+    },
+    {
+      path: 'permission',
+      name: 'PermissionList',
+      component: () => import('@/views/system/permission/index'),
+      meta: {title: '权限管理', icon: 'tree'}
     }
   ]
 }

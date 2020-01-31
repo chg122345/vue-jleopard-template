@@ -130,7 +130,10 @@
           if (this.disabledValue.length) {
             this.optionsData.forEach(i => {
               if (this.disabledValue.includes(i[this.props.value])) {
-                i.disabled = true
+                i.disabled = 1
+                return
+              } else if (i.disabled === 1) {
+                i.disabled = 0
               }
             })
           }
@@ -366,9 +369,12 @@
     color: #606266;
     font-weight: normal;
   }
-  .el-tree >>> .el-tree-node__children .el-tree-node__content .is-node-disabled {
+  .el-tree >>> .el-tree-node__content .is-node-disabled {
     cursor: not-allowed;
     color: #C0C4CC;
     width: 100%;
+  }
+  .el-tree >>> .el-tree-node__children .el-tree-node__content .is-node-disabled {
+    color: #C0C4CC;
   }
 </style>

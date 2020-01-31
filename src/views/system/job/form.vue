@@ -2,7 +2,7 @@
   <drag-dialog
     append-to-body
     :visible.sync="dialog"
-    title="组织信息"
+    title="职位信息"
     enable-drag
     width="800px">
     <dynamic-form v-bind="formOptions" :value="form" ref="pageForm" />
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import {add, edit} from "@/api/dept";
+  import {add, edit} from "@/api/job";
 
   export default {
     inject: {
@@ -29,7 +29,7 @@
           labelWidth: "80",
           rules: {
             name: [
-              {required: true, message: "姓名不能为空", trigger: "blur"}
+              {required: true, message: "名称不能为空", trigger: "blur"}
             ],
           },
           options: [
@@ -46,51 +46,10 @@
               span: 12
             },
             {
-              label: "简称",
-              prop: "shortName",
-              type: 'text',
+              label: "排序号",
+              prop: "sortNumber",
+              type: 'number',
               span: 12
-            },
-            {
-              label: "全称",
-              prop: "displayName",
-              type: 'text',
-              span: 12
-            },
-            {
-              label: "税码",
-              prop: "taxCode",
-              type: 'text',
-              span: 12
-            },
-            {
-              label: "上级部门",
-              prop: "parentId",
-              type: "treeSelect",
-              span: 12,
-              transToTree: true,
-              url: '/sys/dept/select',
-              params: {page: 0, size: 10},
-              props: {
-                label: 'name',
-                value: 'id'
-              }
-            },
-            {
-              label: "叶子节点",
-              prop: "leaf",
-              type: "radio",
-              span: 12,
-              options: [
-                {
-                  label: '否',
-                  value: false
-                },
-                {
-                  label: '是',
-                  value: true
-                }
-              ]
             },
             {
               label: "是否启用",
@@ -109,12 +68,18 @@
               ]
             },
             {
-              label: "备注",
-              prop: "remark",
-              type: "textarea",
+              label: "所属部门",
+              prop: "dept",
+              type: "selectData",
               span: 24,
-              autoSize: {minRows: 3, maxRows: 3},
-              height: 90
+              url: '/sys/dept/select',
+              subType: 'treeSelect',
+              transToTree: true,
+              params: {page: 0, size: 10},
+              props: {
+                label: 'name',
+                key: 'id'
+              }
             }
           ]
         },
@@ -125,10 +90,6 @@
         if (val) {
           this.$nextTick(() => {
             this.$refs.pageForm.clearValidate();
-            if (this.form.id) {
-              const index = this.formOptions.options.findIndex(i => i.prop === 'parentId')
-              this.$set(this.formOptions.options[index], 'disabledValue', [this.form.id])
-            }
           });
         }
       }

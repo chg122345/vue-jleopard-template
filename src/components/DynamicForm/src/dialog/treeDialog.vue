@@ -1,52 +1,50 @@
 <template>
-  <div>
-    <el-dialog :width="changeRem(width)" :title="title" :visible.sync="visible" append-to-body>
-      <el-input
-        :validate-event="false"
-        placeholder="请输入关键字"
-        v-model="keyword"
-        @keyup.enter.native="search">
-        <i slot="suffix" class="el-input__icon el-icon-search cursor" @click="search" />
-      </el-input>
-      <div class="option-box org-box">
-        <div class="tree-left">
-          <el-scrollbar>
-            <el-tree
-              ref="elTree"
-              :data="treeData"
-              :props="props"
-              :check-strictly="checkStrictly"
-              :node-key="props.value"
-              show-checkbox
-              highlight-current
-              :filter-node-method="filterNodeMethod || filterNode"
-              @check="dataCheck"
-              v-bind="$attrs"
-              v-on="$listeners" />
-          </el-scrollbar>
-        </div>
-        <div class="midden-icon">
-          <div class="icon">
-            <i class="el-icon-arrow-right" />
-          </div>
-        </div>
-        <div class="checked-right">
-          <el-tag
-            v-for="(item,index) in getCheckedNodes"
-            :key="index"
-            size="small"
-            closable
-            @close="rmCheckedNode(index)">
-            {{ item }}
-          </el-tag>
+  <drag-dialog :width="width" :title="title" :visible.sync="visible" append-to-body enable-drag>
+    <el-input
+      :validate-event="false"
+      placeholder="请输入关键字"
+      v-model="keyword"
+      @keyup.enter.native="search">
+      <i slot="suffix" class="el-input__icon el-icon-search cursor" @click="search" />
+    </el-input>
+    <div class="option-box org-box">
+      <div class="tree-left">
+        <el-scrollbar>
+          <el-tree
+            ref="elTree"
+            :data="mapTreeOptions"
+            :props="props"
+            :check-strictly="checkStrictly"
+            :node-key="props.value || props.key"
+            show-checkbox
+            highlight-current
+            :filter-node-method="filterNodeMethod || filterNode"
+            @check="dataCheck"
+            v-bind="$attrs"
+            v-on="$listeners" />
+        </el-scrollbar>
+      </div>
+      <div class="midden-icon">
+        <div class="icon">
+          <i class="el-icon-arrow-right" />
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false" size="small">取 消</el-button>
-        <el-button type="primary" size="small" @click="confirm" :disabled="!checkedNodes.length">确 定</el-button>
-      </span>
-    </el-dialog>
-  </div>
+      <div class="checked-right">
+        <el-tag
+          v-for="(item,index) in getCheckedNodes"
+          :key="index"
+          size="small"
+          closable
+          @close="rmCheckedNode(index)">
+          {{ item }}
+        </el-tag>
+      </div>
+    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="visible = false" size="small">取 消</el-button>
+      <el-button type="primary" size="small" @click="confirm" :disabled="!checkedNodes.length">确 定</el-button>
+    </span>
+  </drag-dialog>
 </template>
 
 <script>
@@ -55,6 +53,7 @@ import request from '@/utils/request'
 export default {
   name: 'PersonDialog',
   props: {
+    value: [String, Number, Array, Object],
     visibleValue: {
       required: true,
       type: Boolean
@@ -69,8 +68,9 @@ export default {
     },
     title: {
       type: String,
-      default: '选择人员'
+      default: '数据选择'
     },
+    options: Array, // 选项
     props: {
       type: Object,
       default: () => ({
@@ -88,22 +88,55 @@ export default {
       default: null
     },
     multiple: Boolean, // 是否多选
-    labelFields: Array // 下拉选项显示字段
+    labelFields: Array, // 下拉选项显示字段
+    // 数组转换成树
+    transToTree: Boolean,
+    transToTreeOption: {
+      type: Object,
+      default: () => ({key: "value", parentKey: 'parentId', children: 'children'})
+    }
   },
   data() {
     return {
       keyword: '',
       visible: true,
       checkedNodes: [],
-      treeData: []
+      optionsData: this.options || []
     }
   },
   computed: {
     getCheckedNodes() {
       return this.checkedNodes.map(i => i[this.props.label])
+    },
+    mapTreeOptions() {
+      if (this.transToTree) {
+        const XEUtils = require("xe-utils")
+        const {value, key, children} = this.props
+        this.$set(this.transToTreeOption, 'key', value || key)
+        if (children) {
+          this.$set(this.transToTreeOption, 'children', children)
+        }
+        return XEUtils.toArrayTree(this.optionsData, this.transToTreeOption)
+      }
+      return this.optionsData
     }
   },
   watch: {
+    value: {
+      handler(val) {
+        if (val) {
+          if (this.multiple && val instanceof Array) {
+            this.checkedNodes = val
+          } else if (!this.multiple) {
+            this.checkedNodes = [val]
+          }
+          if (this.checkedNodes.length) {
+            this.$refs.elTree.setCheckedKeys(this.checkedNodes.map(i => i[this.props.value || this.props.key]))
+          }
+        }
+      },
+      immediate: true
+    },
     visibleValue: {
       handler(val) {
         if (val !== this.visible) this.visible = val
@@ -123,7 +156,7 @@ export default {
         url: this.url,
         method: this.$attrs.method || 'get',
       }).then(res => {
-        this.treeData = res.data.list || res.data || []
+        this.optionsData = res.content || res || []
       })
     }
   },
@@ -132,16 +165,17 @@ export default {
       this.$refs.elTree.filter(this.keyword);
     },
     confirm() {
-      let value = ''
+      const {value} = this.props
+      let checkValue = ''
       if (this.multiple) {
-        value = this.checkedNodes.map(i => i[this.props.value])
+        checkValue = value ? this.checkedNodes.map(i => i[value]) : this.checkedNodes
         this.$emit('dataChange', this.checkedNodes)
       } else {
-        value = this.checkedNodes.map(i => i[this.props.value])[0]
+        checkValue = value ? this.checkedNodes.map(i => i[value])[0] : this.checkedNodes[0]
         this.$emit('dataChange', this.checkedNodes[0])
       }
-      this.$emit('change', value)
-      this.$emit('input', value)
+      this.$emit('change', checkValue)
+      this.$emit('input', checkValue)
       this.visible = false
     },
     dataCheck(data, {checkedNodes}) {
@@ -250,4 +284,7 @@ export default {
 .cursor{
   cursor: pointer;
 }
+  .dialog-footer {
+    float: right;
+  }
 </style>
