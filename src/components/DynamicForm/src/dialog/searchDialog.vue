@@ -26,7 +26,7 @@
           </ul>
           <div class="drawing-list-wrap" v-else>
             <el-checkbox-group v-model="checkedValues">
-              <el-checkbox v-for="(item, index) in dataList" :label="item" :key="index">
+              <el-checkbox v-for="(item, index) in dataList" :indeterminate="isChecked(item)" :label="item" :key="index">
                 {{ getName(item) }}
               </el-checkbox>
             </el-checkbox-group>
@@ -56,6 +56,7 @@
   export default {
     name: 'SearchBox',
     props: {
+      value: [String, Number, Array, Object],
       visibleValue: {
         required: true,
         type: Boolean
@@ -101,6 +102,18 @@
       }
     },
     watch: {
+      value: {
+        handler(val) {
+          if (val) {
+            if (this.multiple && val instanceof Array) {
+              this.checkedValues = val
+            } else if (!this.multiple) {
+              this.activeItem = val
+            }
+          }
+        },
+        immediate: true
+      },
       visibleValue: {
         handler(val) {
           if (val !== this.visible) this.visible = val
@@ -188,6 +201,11 @@
           return 'active-item'
         }
         return ''
+      },
+      isChecked(item) {
+        if (!this.checkedValues.length) return false
+        const key = this.props.key || this.props.value
+        return this.checkedValues.map(i => i[key]).includes(item[key])
       },
       changeRem(number) {
         return (parseFloat(number) * Math.min(this.$scale, 1)) + 'px'

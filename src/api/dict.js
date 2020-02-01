@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function add(data) {
   return request({
-    url: '/sys/menu',
+    url: '/sys/dict',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function add(data) {
 
 export function edit(data) {
   return request({
-    url: `/sys/menu/${data.id}`,
+    url: `/sys/dict/${data.id}`,
     method: 'put',
     data
   })
@@ -18,14 +18,7 @@ export function edit(data) {
 
 export function del(id) {
   return request({
-    url: `/sys/menu/${id}`,
+    url: `/sys/dict/${id}`,
     method: 'delete',
-  })
-}
-export function getPermissionList(params) {
-  return request({
-    url: `/sys/menu/select`,
-    method: 'get',
-    params
   })
 }

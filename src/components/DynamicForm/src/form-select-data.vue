@@ -33,6 +33,7 @@
     <search-dialog
       v-if="subType === 'select'"
       :visible-value.sync="dialogShow"
+      :value="value"
       :props="props"
       :url="url"
       :title="title"
@@ -260,11 +261,11 @@
         const value = this.props.value || this.props.key
         if (this.$attrs.multiple && data instanceof Array && data.length) {
           data.forEach(itm => {
-            if (this.optionsData.findIndex(i => i[value] === itm[value]) === -1) {
+            if (Object.keys(itm).length && this.optionsData.findIndex(i => i[value] === itm[value]) === -1) {
               this.optionsData.push(itm)
             }
           })
-        } else {
+        } else if (!this.$attrs.multiple) {
           if (this.optionsData.findIndex(i => i[value] === data[value]) === -1) {
             this.optionsData.push(data)
           }

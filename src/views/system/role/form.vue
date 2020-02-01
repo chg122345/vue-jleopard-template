@@ -2,7 +2,7 @@
   <drag-dialog
     append-to-body
     :visible.sync="dialog"
-    title="菜单权限信息"
+    title="角色信息"
     enable-drag
     width="800px">
     <dynamic-form v-bind="formOptions" :value="form" :editable="editable" ref="pageForm" />
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import {add, edit} from "@/api/menu";
+  import {add, edit} from "@/api/role";
 
   export default {
     inject: {
@@ -30,7 +30,7 @@
           labelWidth: "80",
           rules: {
             name: [
-              {required: true, message: "名称不能为空", trigger: "blur"}
+              {required: true, message: "姓名不能为空", trigger: "blur"}
             ],
           },
           options: [
@@ -41,116 +41,58 @@
               span: 12
             },
             {
-              label: "权限编码",
-              prop: "perms",
+              label: "编码",
+              prop: "code",
               type: 'text',
               span: 12
             },
             {
-              label: "类型",
+              label: "数据权限类型",
               prop: "type",
               type: 'select',
               options: [
-                {
-                  label: '目录',
-                  value: 0,
-                },
-                {
-                  label: '菜单',
-                  value: 1,
-                },
-                {
-                  label: '权限',
-                  value: 2,
-                }
+                {label: '全部', value: 1},
+                {label: '本级', value: 2},
+                {label: '本级及下级', value: 3},
+                {label: '自定义', value: 4}
               ],
               span: 12
             },
             {
-              label: "是否隐藏",
-              prop: "isHidden",
-              type: "radio",
-              span: 12,
-              options: [
-                {
-                  label: '是',
-                  value: true
-                },
-                {
-                  label: '否',
-                  value: false
-                }
-              ]
-            },
-            {
-              label: "外链菜单",
-              prop: "iframe",
-              type: "radio",
-              span: 12,
-              options: [
-                {
-                  label: '是',
-                  value: true
-                },
-                {
-                  label: '否',
-                  value: false
-                }
-              ]
-            },
-            {
-              label: "路径",
-              prop: "path",
-              type: 'text',
-              span: 12
-            },
-            {
-              label: "组件",
-              prop: "component",
-              type: 'text',
-              span: 12
-            },
-            {
-              label: "图标",
-              prop: "icon",
-              type: 'iconSelect',
-              span: 12
-            },
-            {
-              label: "上级菜单",
-              prop: "parentId",
+              label: "数据权限",
+              prop: "dsScope",
               type: "treeSelect",
-              span: 24,
+              span: 12,
               transToTree: true,
-              url: '/sys/menu/select',
-              params: {type: '0,1'},
+              url: '/sys/dept/select',
               props: {
                 label: 'name',
                 value: 'id'
               }
             },
             {
-              label: "排序号",
-              prop: "sortNumber",
-              type: 'number',
-              minusAble: true,
-              span: 12
-            },
-            {
               label: "是否启用",
               prop: "enabled",
               type: "radio",
-              span: 12,
+              span: 24,
               options: [
-                {
-                  label: '是',
-                  value: true
-                },
                 {
                   label: '否',
                   value: false
+                },
+                {
+                  label: '是',
+                  value: true
                 }
               ]
+            },
+            {
+              label: "备注",
+              prop: "remark",
+              type: "textarea",
+              span: 24,
+              autoSize: {minRows: 3, maxRows: 3},
+              height: 90
             }
           ]
         },
@@ -161,10 +103,6 @@
         if (val) {
           this.$nextTick(() => {
             this.$refs.pageForm.clearValidate();
-            if (this.form.id) {
-              const index = this.formOptions.options.findIndex(i => i.prop === 'parentId')
-              this.$set(this.formOptions.options[index], 'disabledValue', [this.form.id])
-            }
           });
         } else {
           this.editable = true

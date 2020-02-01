@@ -95,7 +95,7 @@
               arr.forEach(itm => {
                 if (val[i] === 0 || val[i] == null || val[i] === undefined || val[i] === '') {
                   if (this.value[itm.prop]) {
-                    this.$set(this.value, itm.prop, '')
+                    this.$set(this.value, itm.prop, null)
                   }
                   this.options[itm.index].disabled = true
                   this.$nextTick(() => {
@@ -220,7 +220,7 @@
         if (this.cascadeMap.has(key)) {
           const arr = this.cascadeMap.get(key)
           arr.forEach(obj => {
-            this.$set(this.value, obj.prop, obj.multiple ? [] : '')
+            this.$set(this.value, obj.prop, obj.multiple ? [] : null)
             if (val) {
               const object = deepClone(this.options[obj.index])
               /* Object.keys(object.params).forEach(key => {
@@ -249,7 +249,7 @@
             if (val && this.value[obj.prop]) {
               const object = deepClone(this.options[obj.index])
               if (typeof val === "object") {
-                const props = this.options.find(op => op.prop === 'key').props
+                const props = this.options.find(op => op.prop === key).props
                 const rField = props.key || props.value || 'value'
                 object.params[obj.parentField] = val[rField]
               } else {

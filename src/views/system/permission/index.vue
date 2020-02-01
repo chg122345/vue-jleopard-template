@@ -122,7 +122,7 @@
             label: "是否隐藏",
             prop: "isHidden",
             formatter: (val) => {
-              if (val !== undefined) return val? "隐藏" : '显示'
+              if (val !== undefined) return val ? "隐藏" : '显示'
             }
           },
           {

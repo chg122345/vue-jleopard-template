@@ -112,7 +112,13 @@
           {
             label: "是否启用",
             prop: "enabled",
-            width: 100
+            width: 100,
+            formatter: (val) => {
+              if (val !== undefined) return val ? '启用' : '禁用'
+            },
+            cellStyle: (val) => {
+              if (val !== undefined) return val ? {color: '#13ce66'} : {color: '#FFBA00'}
+            }
           },
           {
             label: "注册时间",

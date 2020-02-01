@@ -61,11 +61,8 @@
             {
               label: "证件类型",
               prop: "certificateType",
-              type: "select",
-              span: 12,
-              options: [
-                {label: '身份证', value: 0}
-              ]
+              type: "text",
+              span: 12
             },
             {
               label: "证件号",

@@ -29,6 +29,18 @@ const SystemRouter = {
       name: 'PermissionList',
       component: () => import('@/views/system/permission/index'),
       meta: {title: '权限管理', icon: 'tree'}
+    },
+    {
+      path: 'role',
+      name: 'RoleList',
+      component: () => import('@/views/system/role/index'),
+      meta: {title: '角色管理', icon: 'user'}
+    },
+    {
+      path: 'dict',
+      name: 'dictList',
+      component: () => import('@/views/system/dict/index'),
+      meta: {title: '字典管理', icon: 'user'}
     }
   ]
 }

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function add(data) {
   return request({
-    url: '/sys/menu',
+    url: '/sys/role',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function add(data) {
 
 export function edit(data) {
   return request({
-    url: `/sys/menu/${data.id}`,
+    url: `/sys/role/${data.id}`,
     method: 'put',
     data
   })
@@ -18,14 +18,21 @@ export function edit(data) {
 
 export function del(id) {
   return request({
-    url: `/sys/menu/${id}`,
+    url: `/sys/role/${id}`,
     method: 'delete',
   })
 }
-export function getPermissionList(params) {
+
+/**
+ * 给角色赋权限
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function setPermission(params) {
   return request({
-    url: `/sys/menu/select`,
-    method: 'get',
+    url: `/sys/role/setPermission`,
+    method: 'post',
     params
   })
 }
+

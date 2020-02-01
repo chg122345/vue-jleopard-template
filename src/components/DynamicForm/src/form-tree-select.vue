@@ -325,11 +325,13 @@
             if (this.dataField) {
               this.optionsData = this.optionsData[this.dataField]
             }
-            const obj = {
-              key: key,
-              options: this.optionsData
+            if (this.optionsData && this.optionsData.length) {
+              const obj = {
+                key: key,
+                options: this.optionsData
+              }
+              this.$store.dispatch('optionsCache/setCatch', obj)
             }
-            this.$store.dispatch('optionsCache/setCatch', obj)
           })
         }
       },

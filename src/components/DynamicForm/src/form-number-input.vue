@@ -24,7 +24,7 @@
       value: {
         handler(val) {
           // val === undefined && this.numberValue !== '-'
-          if (val+'.' !== this.numberValue) {
+          if (val + '.' !== this.numberValue) {
             this.numberValue = val
           }
         }

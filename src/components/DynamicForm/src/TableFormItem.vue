@@ -116,7 +116,7 @@
       'form-slider': () => import('./form-slider')
     },
     props: {
-      editable:  Boolean,
+      editable: Boolean,
       type: String, // 表单项类型
       autoSize: [Object, Boolean],
       label: String, // label文本

@@ -61,10 +61,8 @@
   export default {
     name: "Index",
     components: {JForm},
-    directives: {},
     filters: {},
     mixins: [DataTableMixin, ToolBarMixin],
-    props: {},
     data() {
       return {
         tableHead: [
