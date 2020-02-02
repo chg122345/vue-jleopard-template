@@ -6,7 +6,7 @@
     enable-drag
     width="800px">
     <dynamic-form v-bind="formOptions" :value="form" :editable="editable" ref="pageForm" />
-    <div class="bottom-btn-box">
+    <div class="bottom-btn-box" v-if="editable">
       <el-button type="primary" @click="submit" size="small">提交</el-button>
       <el-button type="warning" @click="cancel" size="small">取消</el-button>
     </div>
@@ -31,6 +31,12 @@
           rules: {
             name: [
               {required: true, message: "名称不能为空", trigger: "blur"}
+            ],
+            perms: [
+              {required: true, message: "编码不能为空", trigger: "blur"}
+            ],
+            type: [
+              {required: true, message: "类型不能为空", trigger: "change"}
             ],
           },
           options: [
@@ -161,9 +167,11 @@
         if (val) {
           this.$nextTick(() => {
             this.$refs.pageForm.clearValidate();
+            const index = this.formOptions.options.findIndex(i => i.prop === 'parentId')
             if (this.form.id) {
-              const index = this.formOptions.options.findIndex(i => i.prop === 'parentId')
               this.$set(this.formOptions.options[index], 'disabledValue', [this.form.id])
+            } else {
+              this.$set(this.formOptions.options[index], 'disabledValue', [-1])
             }
           });
         } else {
@@ -181,7 +189,7 @@
       },
       doAdd() {
         add(this.form)
-          .then(res => {
+          .then(() => {
             this.cancel();
             this.$notify({
               title: "添加成功",

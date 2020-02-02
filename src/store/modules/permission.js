@@ -10,6 +10,9 @@ export const transformRoute = (routes = []) => {
   return routes.filter(router => {
     if (router.component) {
       if (router.component === 'Layout') {
+        if (router.path && !router.path.startsWith("/")) {
+          router.path = "/" + router.path
+        }
         router.component = Layout
       } else {
         router.component = loadView(router.component)
@@ -23,6 +26,9 @@ export const transformRoute = (routes = []) => {
 }
 
 export const loadView = (view) => { // 路由懒加载
+  if (view && view.startsWith("/")) {
+    view = view.substring(1)
+  }
   return () => import(`@/views/${view}`)
 }
 

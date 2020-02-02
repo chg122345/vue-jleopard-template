@@ -5,8 +5,8 @@
     title="职位信息"
     enable-drag
     width="800px">
-    <dynamic-form v-bind="formOptions" :value="form" ref="pageForm" />
-    <div class="bottom-btn-box">
+    <dynamic-form v-bind="formOptions" :value="form" :editable="editable" ref="pageForm" />
+    <div class="bottom-btn-box" v-if="editable">
       <el-button type="primary" @click="submit" size="small">提交</el-button>
       <el-button type="warning" @click="cancel" size="small">取消</el-button>
     </div>
@@ -25,6 +25,7 @@
         loading: false,
         dialog: false,
         form: {},
+        editable: true,
         formOptions: {
           labelWidth: "80",
           rules: {
@@ -91,6 +92,8 @@
           this.$nextTick(() => {
             this.$refs.pageForm.clearValidate();
           });
+        } else {
+          this.editable = true
         }
       }
     },

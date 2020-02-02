@@ -3,10 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-/* Layout */
 import Layout from '@/layout'
-
-import SystemRouter from "./modules/system";
 
 /**
  * hidden: true                   if set true, item will not show in the sidebar(default is false)
@@ -52,7 +49,7 @@ export const constantRoutes = [
     }]
   },
 
-  {
+  /* {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
@@ -130,36 +127,30 @@ export const constantRoutes = [
       }
     ]
   },
-
   {
     path: 'external-link',
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+        path: 'https://www.jleopard.org',
         meta: { title: 'External Link', icon: 'link' }
       }
     ]
-  },
+  },*/
 
 ]
 
 export const asyncRoutes = [
-
-  SystemRouter,
-
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
 
 const router = createRouter()
 
-// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router

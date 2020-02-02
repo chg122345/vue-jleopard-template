@@ -14,7 +14,7 @@
         :data.sync="list"
         :config="{render: 'scroll', renderSize: 100}"
         :editable="false"
-        :tool-bar="{label:'操作', align: 'center', width: 150, fixed: 'right'}"
+        :tool-bar="{label:'操作', align: 'center', width: 200, fixed: 'right'}"
         :total="total"
         :offset="offset"
         :page="page"
@@ -130,6 +130,9 @@
             prop: "enabled",
             formatter: (val) => {
               if (val !== undefined) return val ? '启用' : "禁用"
+            },
+            cellStyle: (val) => {
+              if (val !== undefined) return val ? {color: '#13ce66'} : {color: '#FFBA00'}
             }
           },
           {

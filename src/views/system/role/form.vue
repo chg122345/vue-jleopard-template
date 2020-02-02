@@ -6,7 +6,7 @@
     enable-drag
     width="800px">
     <dynamic-form v-bind="formOptions" :value="form" :editable="editable" ref="pageForm" />
-    <div class="bottom-btn-box">
+    <div class="bottom-btn-box" v-if="editable">
       <el-button type="primary" @click="submit" size="small">提交</el-button>
       <el-button type="warning" @click="cancel" size="small">取消</el-button>
     </div>
