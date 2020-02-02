@@ -1,7 +1,9 @@
 import request from '@/utils/request'
 
 export function login(params) {
+  params['grant_type'] = 'password'
   return request({
+    headers: {'Authorization': 'Basic amxlb3BhcmQ6MTIzNDU2'},
     url: '/auth/oauth/token',
     method: 'post',
     params: params

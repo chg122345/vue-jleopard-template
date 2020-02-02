@@ -52,6 +52,7 @@
 
 <script>
   import request from '@/utils/request'
+  import {deepClone} from "@/utils";
 
   export default {
     name: 'SearchBox',
@@ -141,13 +142,13 @@
       }
     },
     created() {
-      if (!this.dataList.length && this.url) {
+      if (!this.dataList.length && this.url && !this.$attrs.cascade) {
         this.search()
       }
     },
     methods: {
       search(url = this.url) {
-        const param = this.params || {}
+        const param = deepClone(this.params) || {}
         param[this.searchKey] = this.keyword
         request({
           url: url,

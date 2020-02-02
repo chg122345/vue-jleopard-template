@@ -38,6 +38,7 @@
 
 <script>
   import {initData} from "@/api/data";
+  import {objectEqual} from "@/utils";
 
   export default {
     name: 'FormTreeSelect',
@@ -127,17 +128,11 @@
           if (children) {
             this.$set(this.transToTreeOption, 'children', children)
           }
+           let options = XEUtils.toArrayTree(this.optionsData, this.transToTreeOption);
           if (this.disabledValue.length) {
-            this.optionsData.forEach(i => {
-              if (this.disabledValue.includes(i[this.props.value])) {
-                i.disabled = 1
-                return
-              } else if (i.disabled === 1) {
-                i.disabled = 0
-              }
-            })
+              options = this.disabledNodeAndChildren(options)
           }
-          return XEUtils.toArrayTree(this.optionsData, this.transToTreeOption)
+          return options
         }
         return this.optionsData
       }
@@ -182,7 +177,7 @@
       },
       params: {
         handler(val, oldVal) {
-          if (val !== oldVal) {
+          if (!objectEqual(val, oldVal)) {
             this.getAsyncOptions(val)
           }
         },
@@ -335,6 +330,32 @@
           })
         }
       },
+      // 禁用数据
+      disabledNodeAndChildren(data = [], isDisabled = false) {
+        return data.map(i => {
+         if (isDisabled || this.disabledValue.includes(i[this.props.value])) {
+            if (!i.disabled) {
+              i.disabled = 1
+            }
+            const children = i[this.props.children || 'children']
+            if (children && children.length) {
+              i.children = this.disabledNodeAndChildren(children, true)
+            }
+          } else if (i.disabled === 1) {
+            i.disabled = 0
+           const children = i[this.props.children || 'children']
+           if (children && children.length) {
+             i.children = this.disabledNodeAndChildren(children)
+           }
+          } else {
+           const children = i[this.props.children || 'children']
+           if (children && children.length) {
+             i.children = this.disabledNodeAndChildren(children)
+           }
+         }
+          return i
+        })
+      }
     },
   };
 </script>

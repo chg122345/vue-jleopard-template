@@ -31,11 +31,6 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    userInfo = Object.assign({
-      client_id: 'webapp',
-      client_secret: '123456',
-      grant_type: 'password'
-    }, userInfo)
     return new Promise((resolve, reject) => {
       login(userInfo).then(response => {
         const { access_token } = response
