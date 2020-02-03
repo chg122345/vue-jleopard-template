@@ -84,12 +84,13 @@
       />
       <!-- 日期选择框 -->
       <el-date-picker
-        :class="`filter-${item.type}`"
+        :class="[`filter-${item.type}`, `date-${item.dateType}`]"
         v-if="item.type === 'date'"
         v-model="searchQuery[item.prop]"
         :picker-options="item.datePickerOptions || datePickerOptions"
         :type="item.dateType"
         :size="size"
+        :value-format="item.valueFormat || 'timestamp'"
         :clearable="item.clearable"
         :disabled="item.disabled"
         @focus="handleEvent(item.event)"
@@ -256,6 +257,11 @@
             this.$set(obj, key, val)
           }
         }
+        for (const key in obj) {
+          if (obj[key] instanceof Array && obj[key].length) {
+            obj[key] = obj[key].join(",")
+          }
+        }
         this.$emit('search', obj)
       },
       deleteNullKey(data = {}) {
@@ -296,6 +302,9 @@
     .filter-date,
     .filter-select {
       width: 180px;
+    }
+    .date-daterange {
+      width: 230px;
     }
     /*.filter-button {*/
     /*background: #277ac0;*/
