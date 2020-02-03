@@ -39,8 +39,20 @@
           :value="value"
           v-on="bindListeners"
           :placeholder="$attrs.disabled?'':placeholder || `请输入${label}`" />
+        <el-input-number
+          v-else-if="type === 'inputNumber'"
+          v-bind="$attrs"
+          :value="value"
+          v-on="bindListeners"
+          :placeholder="$attrs.disabled?'':placeholder || `请输入${label}`" />
         <form-radio
           v-else-if="type === 'radio'"
+          v-bind="$attrs"
+          v-on="bindListeners"
+          :value="value"
+          @change="handleChange" />
+        <el-switch
+          v-else-if="type === 'switch'"
           v-bind="$attrs"
           v-on="bindListeners"
           :value="value"
@@ -366,12 +378,14 @@
       vertical-align: -2px;
     }
 
-    /deep/ .el-select {
+    /deep/ .el-input-number, /deep/ .el-select, /deep/ .el-cascader {
       width: 100%;
     }
 
-    /deep/ .el-cascader {
-      width: 100%;
+    /deep/ .is-controls-right {
+      .el-input__inner {
+        text-align: left;
+      }
     }
 
     /deep/ .el-date-editor.el-input, .el-date-editor.el-input__inner {
@@ -442,6 +456,12 @@
 
   /*详情时去掉边框线*/
   .is-look {
+    /deep/ .el-input-number {
+      .el-input-number__decrease, .el-input-number__increase {
+        display: none;
+      }
+
+    }
     /deep/ .el-input__inner {
       color: #333;
       background: none;

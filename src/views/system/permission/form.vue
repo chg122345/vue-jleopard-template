@@ -138,25 +138,19 @@
             {
               label: "排序号",
               prop: "sortNumber",
-              type: 'number',
-              minusAble: true,
+              type: 'inputNumber',
+              controlsPosition: "right",
               span: 12
             },
             {
               label: "是否启用",
               prop: "enabled",
-              type: "radio",
-              span: 12,
-              options: [
-                {
-                  label: '是',
-                  value: true
-                },
-                {
-                  label: '否',
-                  value: false
-                }
-              ]
+              type: "switch",
+              activeColor: "#13ce66",
+              inactiveColor: "#ff4949",
+              activeText: "启用",
+              inactiveText: "禁用",
+              span: 12
             }
           ]
         },

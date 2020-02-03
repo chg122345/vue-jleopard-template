@@ -55,18 +55,12 @@
             {
               label: "是否启用",
               prop: "enabled",
-              type: "radio",
-              span: 12,
-              options: [
-                {
-                  label: '否',
-                  value: false
-                },
-                {
-                  label: '是',
-                  value: true
-                }
-              ]
+              type: "switch",
+              activeColor: "#13ce66",
+              inactiveColor: "#ff4949",
+              activeText: "启用",
+              inactiveText: "禁用",
+              span: 12
             },
             {
               label: "所属部门",
