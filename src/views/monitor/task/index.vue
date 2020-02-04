@@ -14,7 +14,7 @@
         :data.sync="list"
         :config="{render: 'scroll', renderSize: 100}"
         :editable="false"
-        :tool-bar="{label:'操作', align: 'center', width: 150, fixed: 'right'}"
+        :tool-bar="{label:'操作', align: 'center', width: 240, fixed: 'right'}"
         :total="total"
         :offset="offset"
         :page="page"
@@ -29,6 +29,16 @@
             type="primary"
             icon="el-icon-edit"
             @click="subEdit(row)" />
+          <el-button
+            size="mini"
+            type="success"
+            icon="el-icon-thumb"
+            @click="subExec(row.id)" />
+          <el-button
+            size="mini"
+            type="warning"
+            :icon="row.pause?'el-icon-video-pause' : 'el-icon-video-play'"
+            @click="subEditPause(row.id)" />
           <el-popover :ref="row.id" placement="top" width="180">
             <p>确定删除本条数据吗?</p>
             <div style="text-align: right; margin: 0">
@@ -58,7 +68,7 @@
 <script>
   import DataTableMixin from "@/mixins/DataTableMixin"
   import JForm from './form'
-  import {del} from "@/api/monitor/task";
+  import {del, exec, editPause} from "@/api/monitor/task";
   import ToolBarMixin from "@/views/system/mixins/ToolBarMixin";
 
   export default {
@@ -154,6 +164,25 @@
           this.delLoading = false;
           this.$refs[id].doClose();
         });
+      },
+      subExec(id) {
+        exec(id).then(() => {
+          this.$notify({
+            title: "执行成功",
+            type: "success",
+            duration: 2500
+          });
+        })
+      },
+      subEditPause(id) {
+        editPause(id).then(() => {
+          this.$notify({
+            title: "更改成功",
+            type: "success",
+            duration: 2500
+          });
+          this.dataTableInit();
+        })
       }
     }
   }

@@ -10,9 +10,16 @@ export function add(data) {
 
 export function edit(data) {
   return request({
-    url: `/monitor/task/${data.id}`,
-    method: 'put',
+    url: `/monitor/task`,
+    method: 'patch',
     data
+  })
+}
+
+export function editPause(id) {
+  return request({
+    url: `/monitor/task/${id}`,
+    method: 'put'
   })
 }
 
@@ -32,6 +39,17 @@ export function deleteBach(ids) {
     url: `/monitor/task/delBach`,
     method: 'delete',
     params: {ids}
+  })
+}
+
+/**
+ * 执行定时任务
+ * @param id
+ */
+export function exec(id) {
+  return request({
+    url: `/monitor/task/exec/${id}`,
+    method: 'put'
   })
 }
 

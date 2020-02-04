@@ -4,7 +4,14 @@
       <div class="table-top-tool">
         <dynamic-search :data="tableFilterList(tableHead)" @search="dataTableSearch">
           <el-button type="warning" size="small" :disabled="!checkedIds.length" @click="subDeleteBach">删除勾选</el-button>
-          <el-button type="danger" size="small" :disabled="!list.length" :loading="clearLoading" icon="el-icon-delete" @click="clearAll">清空</el-button>
+          <el-button
+            type="danger"
+            size="small"
+            :disabled="!list.length"
+            :loading="clearLoading"
+            icon="el-icon-delete"
+            @click="clearAll">清空
+          </el-button>
         </dynamic-search>
       </div>
       <edit-data-table
@@ -24,6 +31,11 @@
         @handlePageChange="dataTablePageChange"
         @handleSizeChange="dataTableSizeChange">
         <template #toolbar="{row}">
+          <el-button
+            size="mini"
+            type="info"
+            icon="el-icon-view"
+            @click.stop="subLook(row)" />
           <el-popover :ref="row.id" placement="top" width="180">
             <p>确定删除本条数据吗?</p>
             <div style="text-align: right; margin: 0">
@@ -41,16 +53,20 @@
               >确定
               </el-button>
             </div>
-            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" />
+            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" @click.stop="" />
           </el-popover>
-        </template>
-        <template #consumingTime="{row}">
-          <el-tag v-if="row.consumingTime <= 300" size="mini">{{ row.consumingTime }}ms</el-tag>
-          <el-tag v-else-if="row.consumingTime <= 1000" type="warning" size="mini">{{ row.consumingTime }}ms</el-tag>
-          <el-tag v-else type="danger" size="mini">{{ row.consumingTime }}ms</el-tag>
         </template>
       </edit-data-table>
     </el-card>
+    <drag-dialog
+      append-to-body
+      :visible.sync="dialogVisible"
+      destroy-on-close
+      title="定时任务信息"
+      enable-drag
+      width="800px">
+      <div v-html="exDetail" />
+    </drag-dialog>
   </div>
 </template>
 
@@ -98,15 +114,17 @@
           {
             label: "请求方法",
             prop: "actionMethod",
+            width: 100
           },
           {
             label: "请求参数",
             prop: "params",
+            minWidth: 150,
           },
           {
-            label: "耗时",
-            prop: "consumingTime",
-            type: 'slot'
+            label: "异常信息",
+            prop: "exDesc",
+            minWidth: 200,
           },
           {
             label: "发生时间",
@@ -123,7 +141,9 @@
         ],
         delLoading: false,
         checkedIds: [],
-        clearLoading: false
+        clearLoading: false,
+        dialogVisible: false,
+        exDetail: ''
       }
     },
     created() {
@@ -138,7 +158,7 @@
         const params = {
           size: this.offset,
           page: this.page,
-          type: 1
+          type: 2
         };
         this._params = Object.assign(params, this._query);
         return true;
@@ -193,11 +213,17 @@
             this.dleTableChangePage();
             this.dataTableInit();
             this.clearLoading = false
-          }).catch(() => { this.clearLoading = false })
+          }).catch(() => {
+            this.clearLoading = false
+          })
         })
       },
       handleSelectionChange(data) {
         this.checkedIds = data.map(i => i.id)
+      },
+      subLook(row) {
+        this.dialogVisible = true
+        this.exDetail = window.atob(row.exDetail)
       }
     }
   }

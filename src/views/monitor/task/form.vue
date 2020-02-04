@@ -75,7 +75,7 @@
               span: 12
             },
             {
-              label: "任务状态",
+              label: "是否暂停",
               prop: "pause",
               type: "switch",
               activeColor: "#13ce66",
@@ -101,12 +101,12 @@
         if (val) {
           this.$nextTick(() => {
             this.$refs.pageForm.clearValidate();
-            const index = this.formOptions.options.findIndex(i => i.prop === 'parentId')
+           /* const index = this.formOptions.options.findIndex(i => i.prop === 'parentId')
             if (this.form.id) {
               this.$set(this.formOptions.options[index], 'disabledValue', [this.form.id])
             } else {
               this.$set(this.formOptions.options[index], 'disabledValue', [-1])
-            }
+            }*/
           });
         } else {
           this.editable = true
