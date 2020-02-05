@@ -6,7 +6,7 @@
     name: 'Index',
     data() {
       return {
-        sqlApi: `http://192.168.198.1:8008/druid`
+        sqlApi: `${process.env.VUE_APP_BASE_API}/sys/druid`
       }
     }
   }
