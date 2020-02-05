@@ -15,6 +15,7 @@
 
 <script>
   import {add, edit} from "@/api/menu";
+  import {validURL} from "@/utils/validate"
 
   export default {
     inject: {
@@ -37,6 +38,35 @@
             ],
             type: [
               {required: true, message: "类型不能为空", trigger: "change"}
+            ],
+            iframe: [
+              {required: true, message: "是否外链菜单不能为空", trigger: "change"}
+            ],
+            path: [
+              {
+                validator: (rule, value, callback) => {
+                  if (this.form.type === 1 && !value) {
+                    callback(new Error('路径不能为空'));
+                  } else if (this.form.iframe && !validURL(value)) {
+                    callback(new Error('请填正确的外链地址'));
+                  } else {
+                    callback();
+                  }
+                },
+                trigger: "blur"
+              }
+            ],
+            component: [
+              {
+                validator: (rule, value, callback) => {
+                  if (this.form.type === 1 && !this.form.iframe && !value) {
+                    callback(new Error('组件不能为空'));
+                  } else {
+                    callback();
+                  }
+                },
+                trigger: "blur"
+              }
             ],
           },
           options: [
@@ -108,7 +138,11 @@
               label: "路径",
               prop: "path",
               type: 'text',
-              span: 12
+              span: 12,
+              tipsContent: `<p>URL格式：</p>
+                  <p>1.常规业务开发的功能URL，如用户管理，Views目录下页面路径为 @view/system/user, 此处填写 system/user</p>
+                  <p>2.外部链接菜单，如通过菜单打开百度网页，此处填写 http://www.baidu.com，http:// 不可省略</p>
+                  <p>示例：用户管理：/system/user 嵌套网页：http://127.0.0.1:8008</p>`
             },
             {
               label: "组件",

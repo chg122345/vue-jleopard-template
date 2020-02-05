@@ -33,6 +33,18 @@
             jobName: [
               {required: true, message: "任务名称不能为空", trigger: "blur"}
             ],
+            instanceServer: [
+              {required: true, message: "服务实例不能为空", trigger: "change"}
+            ],
+            beanName: [
+              {required: true, message: "Bean名称不能为空", trigger: "blur"}
+            ],
+            methodName: [
+              {required: true, message: "Bean方法名不能为空", trigger: "blur"}
+            ],
+            cronExpression: [
+              {required: true, message: "cron表达式不能为空", trigger: "blur"}
+            ],
           },
           options: [
             {
@@ -72,7 +84,8 @@
               label: "cron表达式",
               prop: "cronExpression",
               type: 'text',
-              span: 12
+              span: 12,
+              tipsContent: `<a href="http://cron.qqe2.com/" target="_blank" style="color: #00B0F9">点击去在线生成</a>`
             },
             {
               label: "是否暂停",
@@ -82,7 +95,7 @@
               inactiveColor: "#ff4949",
               activeText: "暂停",
               inactiveText: "启用",
-              span: 12
+              span: 24
             },
             {
               label: "备注",

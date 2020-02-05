@@ -17,6 +17,7 @@
       <el-form-item
         v-if="type"
         :prop="prop"
+        :class="{'has-tips': tipsContent}"
         ref="elpage-form-item"
         style="display: inline-block; width: 100%;">
         <div
@@ -108,6 +109,10 @@
           v-bind="$attrs"
           v-on="bindListeners"
           :value="value" />
+        <el-tooltip placement="top" effect="light" v-if="editable && tipsContent">
+          <div slot="content" v-html="tipsContent" />
+          <i class="el-icon-warning tips-icon" />
+        </el-tooltip>
       </el-form-item>
       <div class="text-box" v-else-if="value" :style="$attrs.fontStyle" @click="handleChange(value)">{{ value }}</div>
     </div>
@@ -149,7 +154,8 @@
       value: {
         type: [Number, String, Boolean, Array, Date, Object]
       },
-      cellInput: Boolean // 在表格中嵌套使用
+      cellInput: Boolean, // 在表格中嵌套使用
+      tipsContent: String // 提示的内容
     },
     inject: {
       labelWidth: {default: 160},
@@ -435,6 +441,19 @@
 
         &:first-child {
           flex: 1;
+        }
+      }
+
+      .tips-icon {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+      }
+
+      /deep/ .has-tips {
+        .el-form-item__content {
+          padding-right: 20px;
         }
       }
     }

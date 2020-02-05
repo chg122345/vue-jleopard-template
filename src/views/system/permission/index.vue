@@ -15,9 +15,7 @@
         :config="{render: 'scroll', renderSize: 100}"
         :editable="false"
         :tool-bar="{label:'操作', align: 'center', width: 200, fixed: 'right'}"
-        :total="total"
-        :offset="offset"
-        :page="page"
+        no-pagination
         @handlePageChange="dataTablePageChange"
         @handleSizeChange="dataTableSizeChange">
         <template #icon="{row}">
@@ -157,7 +155,7 @@
         this._url = "/sys/menu";
         this._method = "get";
         const params = {
-          size: this.offset,
+          size: 999,
           page: this.page
         };
         this._params = Object.assign(params, this._query);

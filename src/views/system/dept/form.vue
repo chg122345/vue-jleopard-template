@@ -31,7 +31,10 @@
           labelWidth: "80",
           rules: {
             name: [
-              {required: true, message: "姓名不能为空", trigger: "blur"}
+              {required: true, message: "名称不能为空", trigger: "blur"}
+            ],
+            code: [
+              {required: true, message: "编码不能为空", trigger: "blur"}
             ],
           },
           options: [

@@ -30,7 +30,22 @@
           labelWidth: "80",
           rules: {
             name: [
-              {required: true, message: "姓名不能为空", trigger: "blur"}
+              {required: true, message: "名称不能为空", trigger: "blur"}
+            ],
+            code: [
+              {required: true, message: "编码不能为空", trigger: "blur"}
+            ],
+            dsScope: [
+              {
+                validator: (rule, value, callback) => {
+                  if (this.form.type === 4 && !value) {
+                    callback(new Error('数据权限不能为空'));
+                  } else {
+                    callback();
+                  }
+                },
+                trigger: "blur"
+              }
             ],
           },
           options: [

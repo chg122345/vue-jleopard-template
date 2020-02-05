@@ -31,6 +31,9 @@
             name: [
               {required: true, message: "名称不能为空", trigger: "blur"}
             ],
+            code: [
+              {required: true, message: "编码不能为空", trigger: "blur"}
+            ],
           },
           options: [
             {

@@ -44,6 +44,32 @@
             name: [
               {required: true, message: "姓名不能为空", trigger: "blur"}
             ],
+            account: [
+              {required: true, message: "账号不能为空", trigger: "blur"}
+            ],
+            code: [
+              {required: true, message: "编码不能为空", trigger: "blur"}
+            ],
+            phone: [
+              {required: true, message: "手机不能为空", trigger: "blur"},
+              { type: 'number', validator: (rule, value, callback) => {
+                  const reg = /^1[345789]\d{9}$/
+                  if (!reg.test(value)) {
+                    callback(new Error('请输入11位手机号'))
+                  } else {
+                    callback()
+                  }
+                }, message: '请输入11位有效手机号号码', trigger: 'blur' }
+            ],
+            dept: [
+              {required: true, message: "所属部门不能为空", trigger: "change"}
+            ],
+            job: [
+              {required: true, message: "职务不能为空", trigger: "change"}
+            ],
+            roles: [
+              {required: true, message: "角色不能为空", trigger: "change"}
+            ],
           },
           options: [
             {
@@ -130,7 +156,7 @@
               }
             },
             {
-              label: "职位",
+              label: "职务",
               prop: "job",
               type: "selectData",
               span: 12,
