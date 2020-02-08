@@ -175,19 +175,6 @@
         }
       };
     },
-    watch: {
-      searchQuery: {
-        handler(val) {
-          if (val) {
-            this.deleteNullKey(val)
-            if (!Object.keys(val).length) {
-              this.$emit('search', {})
-            }
-          }
-        },
-        deep: true
-      }
-    },
     mounted() {
       this.initParams();
     },
