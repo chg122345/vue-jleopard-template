@@ -14,32 +14,24 @@
         :data.sync="list"
         :config="{render: 'scroll', renderSize: 100}"
         :editable="false"
-        :tool-bar="{label:'操作', align: 'center', width: 240, fixed: 'right'}"
+        :tool-bar="{label:'操作', align: 'center', width: 150, fixed: 'right'}"
         :total="total"
         :offset="offset"
         :page="page"
         @handlePageChange="dataTablePageChange"
         @handleSizeChange="dataTableSizeChange">
-        <template #pause="{row}">
-          <el-tag :type="row.pause ? 'warning' : 'success'" size="mini">{{ row.pause ? '已暂停' : '运行中' }}</el-tag>
-        </template>
         <template #toolbar="{row}">
           <el-button
             size="mini"
             type="primary"
             icon="el-icon-edit"
-            @click="subEdit(row)" />
+            @click="goDetail(row.id)" />
           <el-button
             size="mini"
             type="success"
-            icon="el-icon-thumb"
-            @click="subExec(row.id)" />
-          <el-button
-            size="mini"
-            type="warning"
-            :icon="row.pause?'el-icon-video-pause' : 'el-icon-video-play'"
-            @click="subEditPause(row.id)" />
-          <el-popover :ref="row.id" placement="top" width="180">
+            icon="el-icon-video-play"
+            @click="subDeploy(row.id)" />
+          <el-popover :ref="row.id" placement="top" width="180" v-if="!row.deploymentId">
             <p>确定删除本条数据吗?</p>
             <div style="text-align: right; margin: 0">
               <el-button
@@ -68,62 +60,44 @@
 <script>
   import DataTableMixin from "@/mixins/DataTableMixin"
   import JForm from './form'
-  import {del, exec, editPause} from "@/api/monitor/task";
+  import {del, deploy} from "@/api/activiti";
   import TableFormCrudMixin from "@/mixins/TableFormCrudMixin";
 
   export default {
     name: "Index",
     components: {JForm},
+    directives: {},
     filters: {},
     mixins: [DataTableMixin, TableFormCrudMixin],
+    props: {},
     data() {
       return {
         tableHead: [
           {
-            label: "服务实例",
-            prop: "instanceServer",
-            minWidth: 120,
+            label: "模型ID",
+            prop: "id",
+          },
+          {
+            label: "模型名称",
+            prop: "name",
+            sortable: true,
+            minWidth: 100,
             query: {
-              type: 'input',
-              hiddenLabel: true
+              type: 'input'
             }
           },
           {
-            label: "任务名称",
-            prop: "jobName",
-            query: {
-              type: 'input',
-              hiddenLabel: true
-            }
+            label: "模型标识",
+            prop: "key",
           },
           {
-            label: "Bean名称",
-            prop: "beanName",
-          },
-          {
-            label: "执行方法",
-            prop: "methodName",
-          },
-          {
-            label: "参数",
-            prop: "params",
-          },
-          {
-            label: "cron表达式",
-            prop: "cronExpression",
-          },
-          {
-            label: "任务状态",
-            prop: "pause",
-            type: 'slot'
-          },
-          {
-            label: "备注",
-            prop: "remark",
+            label: "版本号",
+            prop: "version",
+            align: 'center'
           },
           {
             label: "创建时间",
-            property: "created",
+            property: "createTime",
             align: 'center',
             width: 160,
             sortable: true
@@ -139,7 +113,7 @@
     },
     methods: {
       dataTableBeforeInit() {
-        this._url = "/monitor/task";
+        this._url = "/activiti/model";
         this._method = "get";
         const params = {
           size: this.offset,
@@ -165,23 +139,16 @@
           this.$refs[id].doClose();
         });
       },
-      subExec(id) {
-        exec(id).then(() => {
-          this.$notify({
-            title: "执行成功",
-            type: "success",
-            duration: 2500
-          });
-        })
+      goDetail(id) {
+        this.$router.push({path: '/activiti/detail', query: {id}})
       },
-      subEditPause(id) {
-        editPause(id).then(() => {
-          this.$notify({
-            title: "更改成功",
-            type: "success",
-            duration: 2500
-          });
-          this.dataTableInit();
+      subDeploy(id) {
+        deploy(id).then(() => {
+            this.$notify({
+              title: "发布成功",
+              type: "success",
+              duration: 2500
+            });
         })
       }
     }
