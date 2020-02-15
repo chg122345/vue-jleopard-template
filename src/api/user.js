@@ -30,3 +30,12 @@ export function resetPassword(params) {
     params
   })
 }
+
+
+export function removeRole(params) {
+  return request({
+    url: `/sys/user/removeRole`,
+    method: 'delete',
+    params
+  })
+}

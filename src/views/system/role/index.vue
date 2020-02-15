@@ -94,9 +94,7 @@
               <span class="role-span" style="line-height: 28px">角色人员</span>
             </el-tooltip>
           </div>
-
-          222
-
+          <j-users :role-id="roleId" :is-show="tabBtn === 2" />
         </el-card>
       </el-col>
     </el-row>
@@ -108,13 +106,14 @@
 <script>
   import DataTableMixin from "@/mixins/DataTableMixin"
   import JForm from './form'
+  import JUsers from './users'
   import {del, edit} from "@/api/role";
   import {getPermissionList} from "@/api/menu";
   import ToolBarMixin from "../mixins/ToolBarMixin";
 
   export default {
     name: "Index",
-    components: {JForm},
+    components: {JForm, JUsers},
     directives: {},
     filters: {},
     mixins: [DataTableMixin, ToolBarMixin],
@@ -208,7 +207,15 @@
           // 点击后显示按钮
           this.showButton = val.enabled
           // 初始化
-          this.permissionIds = val.menus.map(i => i.id)
+          const permsIds = []
+          val.menus.forEach(item => {
+            if (val.menus.some(data =>item.id === data.parentId)) {
+              return
+            } else {
+              permsIds.push(item.id)
+            }
+          })
+          this.permissionIds = permsIds
         }
       },
       getPermissions() {

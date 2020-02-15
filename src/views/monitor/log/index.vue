@@ -172,7 +172,7 @@
               type: "success",
               duration: 2500
             });
-            this.dleTableChangePage();
+            this.dleTableChangePage(this.checkedIds.length);
             this.dataTableInit();
           })
         })
