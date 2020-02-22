@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import {add, edit} from "@/api/activiti";
+  import {add, edit} from "@/api/activiti/model";
 
   export default {
     inject: {
@@ -46,6 +46,12 @@
             {
               label: "模型标识",
               prop: "key",
+              type: 'text',
+              span: 24
+            },
+            {
+              label: "模型分类",
+              prop: "category",
               type: 'text',
               span: 24
             },

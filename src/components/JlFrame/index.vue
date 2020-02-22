@@ -1,6 +1,9 @@
 <template>
-  <div ref="iframe" v-loading="loading" :style="'height:'+ height">
+  <div ref="iframe" v-loading="loading" :style="'height:'+ height" class="iframe-wrap">
     <iframe :src="src" frameborder="no" style="width: 100%;height: 100%" scrolling="auto" />
+    <div :style="slotStyle">
+      <slot />
+    </div>
   </div>
 </template>
 <script>
@@ -10,7 +13,8 @@
       src: {
         type: String,
         required: true
-      }
+      },
+      slotStyle: Object
     },
     data() {
       return {
@@ -30,3 +34,9 @@
     }
   }
 </script>
+
+<style scoped>
+  .iframe-wrap {
+    position: relative;
+  }
+</style>

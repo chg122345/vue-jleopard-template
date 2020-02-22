@@ -1,5 +1,7 @@
 <template>
-  <jl-frame :src="api" />
+  <jl-frame :src="url" :slot-style="{ position: 'absolute',top: '12px',right: '10px'}">
+    <el-button type="danger" icon="el-icon-circle-close" size="small" plain @click="close">关闭</el-button>
+  </jl-frame>
 </template>
 
 <script>
@@ -9,12 +11,17 @@
         name: "Detail",
         data() {
             return {
-              api: null
+              url: null
             }
         },
       created() {
           const id = this.$route.query.id
-          this.api = `http://localhost:5001/editor?modelId=${id}&token=Bearer ${getToken()}`
+          this.url = `http://localhost:5001/editor?modelId=${id}&token=Bearer ${getToken()}`
+      },
+      methods: {
+        close() {
+          this.$router.replace("/activiti/model")
+        }
       }
     }
 </script>
