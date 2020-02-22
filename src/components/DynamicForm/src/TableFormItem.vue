@@ -20,6 +20,7 @@
         :class="{'has-tips': tipsContent}"
         ref="elpage-form-item"
         style="display: inline-block; width: 100%;">
+        <form-slot-content v-if="type === 'slot' && formThis.$scopedSlots[prop]" :value="value" />
         <div
           v-if="['text','password','textarea','input'].includes(type)"
           onmouseover="this.title = this.getElementsByClassName('el-input__inner')[0] ?
@@ -119,7 +120,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/jsx">
 
   export default {
     components: {
@@ -130,7 +131,21 @@
       'form-icon-select': () => import('./form-icon-select'),
       'form-select-data': () => import('./form-select-data'),
       'form-upload': () => import('./form-upload'),
-      'form-slider': () => import('./form-slider')
+      'form-slider': () => import('./form-slider'),
+      'form-slot-content': {
+        props: {
+          value: {
+            type: [Number, String, Boolean, Array, Date, Object]
+          },
+        },
+        inject: {
+          formThis: {default: {}}
+        },
+        render() {
+          const { prop } = this.$parent.$props;
+          return this.formThis.$scopedSlots[prop](this.value);
+        }
+      }
     },
     props: {
       editable: Boolean,
@@ -160,7 +175,8 @@
     inject: {
       labelWidth: {default: 160},
       rules: {default: {}},
-      formSubject: {default: {}}
+      formSubject: {default: {}},
+      formThis: {default: {}}
     },
     data() {
       return {

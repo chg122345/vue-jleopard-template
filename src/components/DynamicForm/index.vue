@@ -66,7 +66,8 @@
       return {
         labelWidth: this.labelWidth,
         rules: this.rules,
-        formSubject: this.formSubject
+        formSubject: this.formSubject,
+        formThis: this
       };
     },
     data() {

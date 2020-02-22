@@ -209,7 +209,7 @@
           // 初始化
           const permsIds = []
           val.menus.forEach(item => {
-            if (val.menus.some(data =>item.id === data.parentId)) {
+            if (val.menus.some(data => item.id === data.parentId)) {
               return
             } else {
               permsIds.push(item.id)
