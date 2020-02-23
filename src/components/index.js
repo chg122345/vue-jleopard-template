@@ -3,13 +3,15 @@ import EditDataTable from "./EditDataTable"
 import DynamicForm from "./DynamicForm"
 import DynamicSearch from "./DynamicSearch"
 import JlFrame from "./JlFrame"
+import ApprovalDialog from './ApprovalDialog'
 
 const components = [
   DragDialog,
   EditDataTable,
   DynamicForm,
   DynamicSearch,
-  JlFrame
+  JlFrame,
+  ApprovalDialog
 ]
 
 const install = function(Vue, opts = {}) {

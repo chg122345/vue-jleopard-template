@@ -43,10 +43,19 @@
             </div>
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" />
           </el-popover>
-          <el-button type="text" icon="el-icon-view" size="mini">流程图</el-button>
+          <el-button type="text" icon="el-icon-view" size="mini" @click="dialog=true; processId=row.id">流程图</el-button>
         </template>
       </edit-data-table>
     </el-card>
+
+    <drag-dialog
+      append-to-body
+      :visible.sync="dialog"
+      title="流程图"
+      enable-drag
+      width="800px">
+      <img :src="imgSrc">
+    </drag-dialog>
   </div>
 </template>
 
@@ -61,7 +70,7 @@
       return {
         tableHead: [
           {
-            label: "流程定义id",
+            label: "流程定义ID",
             prop: "id",
           },
           {
@@ -102,8 +111,13 @@
           },
         ],
         delLoading: false,
-        checkedIds: [],
-        clearLoading: false
+        dialog: false,
+        processId: ''
+      }
+    },
+    computed: {
+      imgSrc() {
+        return `http://localhost:5001/process/img/${this.processId}`
       }
     },
     created() {
@@ -123,7 +137,7 @@
         this._params = Object.assign(params, this._query);
         return true;
       },
-      subDelete(id,deploymentId) {
+      subDelete(id, deploymentId) {
         this.delLoading = true;
         del(deploymentId).then(() => {
           this.$notify({
@@ -140,7 +154,7 @@
           this.$refs[id].doClose();
         });
       },
-      subSuspend(id,isSuspended) {
+      subSuspend(id, isSuspended) {
         this.$confirm('确定要' + (isSuspended ? '激活' : '挂起') + '该流程?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

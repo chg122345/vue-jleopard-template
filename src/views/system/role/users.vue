@@ -1,45 +1,45 @@
 <template>
- <div>
-   <div class="table-top-tool">
-     <dynamic-search :data="tableFilterList(tableHead)" @search="dataTableSearch" />
-   </div>
-   <edit-data-table
-     ref="editTable"
-     show-number
-     :head="tableHead"
-     :loading="loading"
-     :data.sync="list"
-     :config="{render: 'scroll', renderSize: 100}"
-     :editable="false"
-     :tool-bar="{label:'操作', align: 'center', width: 80, fixed: 'right'}"
-     :total="total"
-     :offset="offset"
-     :page="page"
-     @handlePageChange="dataTablePageChange"
-     @handleSizeChange="dataTableSizeChange">
-     <template #toolbar="{row}">
-       <el-popover :ref="row.id" placement="top" width="180">
-         <p>确定删除本条数据吗?</p>
-         <div style="text-align: right; margin: 0">
-           <el-button
-             size="mini"
-             type="text"
-             @click="$refs[row.id].doClose()"
-           >取消
-           </el-button>
-           <el-button
-             :loading="delLoading"
-             type="primary"
-             size="mini"
-             @click="subDelete(row.id)"
-           >确定
-           </el-button>
-         </div>
-         <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" />
-       </el-popover>
-     </template>
-   </edit-data-table>
- </div>
+  <div>
+    <div class="table-top-tool">
+      <dynamic-search :data="tableFilterList(tableHead)" @search="dataTableSearch" />
+    </div>
+    <edit-data-table
+      ref="editTable"
+      show-number
+      :head="tableHead"
+      :loading="loading"
+      :data.sync="list"
+      :config="{render: 'scroll', renderSize: 100}"
+      :editable="false"
+      :tool-bar="{label:'操作', align: 'center', width: 80, fixed: 'right'}"
+      :total="total"
+      :offset="offset"
+      :page="page"
+      @handlePageChange="dataTablePageChange"
+      @handleSizeChange="dataTableSizeChange">
+      <template #toolbar="{row}">
+        <el-popover :ref="row.id" placement="top" width="180">
+          <p>确定删除本条数据吗?</p>
+          <div style="text-align: right; margin: 0">
+            <el-button
+              size="mini"
+              type="text"
+              @click="$refs[row.id].doClose()"
+            >取消
+            </el-button>
+            <el-button
+              :loading="delLoading"
+              type="primary"
+              size="mini"
+              @click="subDelete(row.id)"
+            >确定
+            </el-button>
+          </div>
+          <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" />
+        </el-popover>
+      </template>
+    </edit-data-table>
+  </div>
 </template>
 
 <script>
