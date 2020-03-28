@@ -34,7 +34,7 @@ export default {
       type: [String, Number],
       default: 'auto'
     },
-    // 多级嵌套数据 user:{name:'名称'} prop可以定义成user.name
+
     showOverflowTooltip: { // 内容超出隐藏
       type: Boolean,
       default: true

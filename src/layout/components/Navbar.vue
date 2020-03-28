@@ -5,6 +5,7 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
+      <span class="name-wrapper">欢迎您：{{ user.name }}</span>
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="user.avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
@@ -84,6 +85,9 @@ export default {
 
     &:focus {
       outline: none;
+    }
+    .name-wrapper {
+      vertical-align: text-bottom;
     }
 
     .right-menu-item {
