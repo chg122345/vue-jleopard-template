@@ -221,21 +221,21 @@
         if (this.cascadeMap.has(key)) {
           const arr = this.cascadeMap.get(key)
           arr.forEach(obj => {
-            this.$set(this.value, obj.prop, obj.multiple ? [] : null)
             if (val) {
               const object = deepClone(this.options[obj.index])
-              /* Object.keys(object.params).forEach(key => {
-                if (!object.params[key]) {
-                  object.params[key] = val
-                }
-              })*/
               if (typeof val === "object") {
                 const rField = props.key || props.value || 'value'
-                object.params[obj.parentField] = val[rField]
-              } else {
-                object.params[obj.parentField] = val
+                if (object.params[obj.parentField] !== val[rField]) {
+                  this.$set(this.value, obj.prop, obj.multiple ? [] : null)
+                  object.params[obj.parentField] = val[rField]
+                }
+              } else if (object.params[obj.parentField] !== val) {
+                  this.$set(this.value, obj.prop, obj.multiple ? [] : null)
+                  object.params[obj.parentField] = val
               }
               this.$set(this.options, obj.index, object)
+            } else {
+              this.$set(this.value, obj.prop, obj.multiple ? [] : null)
             }
             this.handlerCascade('', obj.prop)
           })
